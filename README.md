@@ -19,7 +19,7 @@ export TIZEN_CERTIFICATE=<certificate_name>
 ```
 
 
-The path to Tizen Studio and choise architechture and compiler can be set in
+The path to Tizen Studio, choise of architechture and compiler can be set in
 the file `build_opt.sh`
 
 Then compile with
