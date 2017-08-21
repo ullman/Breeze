@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.4" package="kr.ullman.breeze" version="0.1.0">
+    <author email="henrik@ullman.com" href="https://github.com/ullman/Breeze">Henrik Ullman</author>
+    <description>RSS and Atom reader for Tizen 2.4 mobile and up</description>
     <profile name="mobile"/>
     <ui-application appid="kr.ullman.breeze" exec="breeze" launch_mode="single" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>Breeze</label>
@@ -9,4 +11,6 @@
         <privilege>http://tizen.org/privilege/download</privilege>
         <privilege>http://tizen.org/privilege/internet</privilege>
     </privileges>
+    <feature name="http://tizen.org/feature/screen.size.normal.480.800">true</feature>
+    <feature name="http://tizen.org/feature/screen.size.normal.720.1280">true</feature>
 </manifest>
