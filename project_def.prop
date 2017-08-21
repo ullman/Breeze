@@ -1,0 +1,63 @@
+
+# Project Name
+APPNAME = breeze
+
+# Project Type
+type = app
+
+# Project Profile
+profile = mobile-2.4
+
+# C/CPP Sources
+USER_SRCS = src/breeze.c src/cb_functions.c src/app_control_functions.c src/rss_functions.c src/database.c
+
+# EDC Sources
+USER_EDCS =  
+
+# PO Sources
+USER_POS = 
+
+# User Defines
+USER_DEFS = 
+USER_CPP_DEFS = 
+
+# User Undefines
+USER_UNDEFS = 
+USER_CPP_UNDEFS = 
+
+# User Libraries
+USER_LIBS = nxml mrss 
+
+# User Objects
+USER_OBJS = 
+
+# User Includes
+## C Compiler
+USER_C_INC_DIRS = inc build/include
+USER_INC_FILES =
+## C++ Compiler
+USER_CPP_INC_DIRS = 
+USER_CPP_INC_FILES = 
+
+USER_INC_DIRS = $(USER_C_INC_DIRS) $(USER_CPP_INC_DIRS)
+
+# User Library Path
+USER_LIB_DIRS = lib 
+
+# EDC Resource Path
+USER_EDCS_IMAGE_DIRS = res/images 
+USER_EDCS_SOUND_DIRS = ${OUTPUT_DIR} edje/sounds 
+USER_EDCS_FONT_DIRS = ${OUTPUT_DIR} edje/fonts 
+
+# EDC Flags
+USER_EXT_EDC_KEYS = EDC0 
+
+USER_EXT_EDC0_EDCS = 
+USER_EXT_EDC0_EDCS_IMAGE_DIRS = res/images 
+USER_EXT_EDC0_EDCS_SOUND_DIRS = ${OUTPUT_DIR} edje/sounds 
+USER_EXT_EDC0_EDCS_FONT_DIRS = ${OUTPUT_DIR} edje/fonts 
+
+# Resource Filter
+USER_RES_INCLUDE = 
+USER_RES_EXCLUDE = 
+
