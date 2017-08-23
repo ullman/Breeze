@@ -47,21 +47,21 @@ sort_rss_items (gconstpointer a, gconstpointer b)
   time_a = mktime (&rss_tm_a);
   time_b = mktime (&rss_tm_b);
 
-  dlog_print (DLOG_DEBUG, LOG_TAG, a_item->pubDate);
-  dlog_print (DLOG_DEBUG, LOG_TAG, b_item->pubDate);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, a_item->pubDate);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, b_item->pubDate);
   if (time_a > time_b)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "a larger");
+    //  dlog_print (DLOG_DEBUG, LOG_TAG, "a larger");
       return -1;
     }
   else if (time_b > time_a)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "b larger");
+     // dlog_print (DLOG_DEBUG, LOG_TAG, "b larger");
       return 1;
     }
   else
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "a = b");
+     // dlog_print (DLOG_DEBUG, LOG_TAG, "a = b");
       return 0;
     }
   //TODO the underlying order of the entries are not changed
@@ -195,7 +195,14 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
     }
   else
     {
-      sprintf (error_text, "Error retrieving feed: %s", feed_to_parse->name);
+		if(err == 9)
+		{
+			sprintf (error_text, "Incompatible feed: %s", feed_to_parse->name);
+		}
+		else
+		{
+			sprintf (error_text, "Error retrieving feed: %s", feed_to_parse->name);
+		}
       error_popup = elm_popup_add (ad->nf);
       elm_object_style_set (error_popup, "toast");
       elm_object_text_set (error_popup, error_text);

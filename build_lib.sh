@@ -1,9 +1,9 @@
 #!/bin/bash
 source $(dirname $0)/build_opt.sh
 #get library sources
-if [ ! -f libmrss-stripped.tar.gz ]
+if [ ! -f libmrss.tar.gz ]
 then
-    wget -O libmrss-stripped.tar.gz https://github.com/moraxy/libmrss-stripped/archive/42db00201dc9229b893dc8a2cf9304867d7bb96a.tar.gz
+    wget -O libmrss.tar.gz https://github.com/ullman/libmrss/archive/6057dbca1113711123c45754547e73a5acae7d08.tar.gz
 fi
 if [ ! -f libnxml-0.18.3.tar.gz ]
 then
@@ -46,8 +46,8 @@ cd ..
 cd ..
 
 cd build
-tar xf ../libmrss-stripped.tar.gz
-cd libmrss-stripped-42db00201dc9229b893dc8a2cf9304867d7bb96a
+tar xf ../libmrss.tar.gz
+cd libmrss-6057dbca1113711123c45754547e73a5acae7d08
 CC="$CC $SYSROOT" ./configure --host=$HOST --build=$TARGET --prefix=$REPODIR/build
 
 make install

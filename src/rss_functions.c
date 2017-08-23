@@ -23,10 +23,12 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   CURLcode code;
   GSList *item_llist2;
   mrss_options_t *feed_options;
-
+   
+  
   feed_url = rss_feed->url;
   
-  feed_options = mrss_options_new(5, NULL,NULL,NULL,NULL,NULL,0,NULL,NULL);//5 sec timeout
+  
+  feed_options = mrss_options_new(3, NULL,NULL,NULL,NULL,NULL,0,NULL,NULL);//3 sec timeout
 
   //TODO add error if network is not setup
   err = mrss_parse_url_with_options_and_error (feed_url,
@@ -43,6 +45,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
       for (feed_item = feed_data->item; feed_item;
 	   feed_item = feed_item->next)
 	{
+
       feed_item->source = rss_feed->name;//TODO remove this workaround
 	  feed_item2 = feed_item;
 	  item_llist2 = g_slist_append (*item_llist, feed_item2);
@@ -51,9 +54,13 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
 	}
       return 0;
     }
-  else
+  else if (err == MRSS_ERR_PARSER)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "mrss parse error");
+		dlog_print (DLOG_DEBUG, LOG_TAG, "error parsing feed, ");
+		return 9;
+	}
+    {
+      dlog_print (DLOG_DEBUG, LOG_TAG, "unspecified feed error");
       return 1;
     }
 }
@@ -74,8 +81,6 @@ crss_add_feed (const char *feed_url, const char *feed_name,
   this_feed = malloc (sizeof (feed_s));//TODO free when removing feed
   this_feed->url = malloc (sizeof (char) * (unsigned int)url_len+1);
   this_feed->name = malloc (sizeof (char) * (unsigned int)name_len+1);
-  //this_feed->url = malloc (sizeof (char) * 1000); //TEMP Crash when adding "Ars Technica" is here
-  //this_feed->name = malloc (sizeof (char) * 1000);
 
   add_url = strdup (feed_url);
   add_name = strdup (feed_name);
