@@ -6,6 +6,7 @@ License: GPL Version 3
 #define __RSS_FUNCTIONS_H__
 
 
+char *rep_str(char *target, size_t target_len, const char *sub, const char *repl);
 
 int 
 crss_parse_feed (feed_s * rss_feed, GSList ** item_llist);

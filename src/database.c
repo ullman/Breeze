@@ -19,9 +19,9 @@ database_create (char *database_name)
   err_msg = 0;
   db_err = sqlite3_open (database_name, &db_handle);
 
-  snprintf (sql,SQL_SIZE, "CREATE TABLE "
-	   "main.ex(ID INTEGER PRIMARY KEY, "
-	   "NAME TEXT NOT NULL, " "URL TEXT NOT NULL);");
+  snprintf (sql, SQL_SIZE, "CREATE TABLE "
+	    "main.ex(ID INTEGER PRIMARY KEY, "
+	    "NAME TEXT NOT NULL, " "URL TEXT NOT NULL);");
   db_err = sqlite3_exec (db_handle, sql, 0, 0, &err_msg);
 
   if (db_err != SQLITE_OK)
@@ -47,7 +47,8 @@ database_add_feed (char *database_name, feed_s * feed)
     {
       dlog_print (DLOG_DEBUG, LOG_TAG, "database opening error");
     }
-  snprintf (sql, SQL_SIZE,"INSERT INTO ex(NAME,URL) " "VALUES('%s','%s');", feed->name, feed->url);
+  snprintf (sql, SQL_SIZE, "INSERT INTO ex(NAME,URL) " "VALUES('%s','%s');",
+	    feed->name, feed->url);
   dlog_print (DLOG_DEBUG, LOG_TAG, sql);
   db_err = sqlite3_exec (db_handle, sql, 0, 0, &err_msg);
   if (db_err != SQLITE_OK)

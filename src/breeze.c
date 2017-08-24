@@ -45,10 +45,11 @@ item_label_get (void *data, Evas_Object * obj, const char *part)
     {
       if (this_item->title)
 	{
-	  return strdup (this_item->title);
+
+	  return strdup (this_item->title);	//Genlist fails to display "&"
 	}
       else
-	    return strdup ("error: no title");
+	return strdup ("error: no title");
     }
   else if (!strcmp (part, "elm.text.sub"))
     {
@@ -56,19 +57,19 @@ item_label_get (void *data, Evas_Object * obj, const char *part)
 	{
 	  return strdup (this_item->pubDate);
 	}
-	else
-	  return strdup ("No date");
-      
+      else
+	return strdup ("No date");
+
     }
   else if (!strcmp (part, "elm.text.end"))
-  {
-	  if (this_item->source)
+    {
+      if (this_item->source)
 	{
 	  return strdup (this_item->source);
 	}
-	else
-	  return strdup ("No rss name");
-  }
+      else
+	return strdup ("No rss name");
+    }
   else
     return NULL;
 }
@@ -166,12 +167,12 @@ create_base_gui (appdata_s * ad)
   /*update button */
   ad->button_update = elm_button_add (ad->nf);
   elm_object_style_set (ad->button_update, "naviframe/title_left");
-  elm_object_text_set(ad->button_update,"Update");
+  elm_object_text_set (ad->button_update, "Update");
 
   /*options button */
   ad->button_options = elm_button_add (ad->nf);
   elm_object_style_set (ad->button_options, "naviframe/title_left");
-  elm_object_text_set(ad->button_options,"Feeds");
+  elm_object_text_set (ad->button_options, "Feeds");
 
   evas_object_smart_callback_add (ad->button_update, "clicked",
 				  cb_button_update_clicked, ad);

@@ -19,6 +19,7 @@ License: GPL Version 3
 
 
 
+
 Eina_Bool
 naviframe_pop_cb (void *data, Elm_Object_Item * it)
 {
@@ -51,17 +52,17 @@ sort_rss_items (gconstpointer a, gconstpointer b)
   //dlog_print (DLOG_DEBUG, LOG_TAG, b_item->pubDate);
   if (time_a > time_b)
     {
-    //  dlog_print (DLOG_DEBUG, LOG_TAG, "a larger");
+      //  dlog_print (DLOG_DEBUG, LOG_TAG, "a larger");
       return -1;
     }
   else if (time_b > time_a)
     {
-     // dlog_print (DLOG_DEBUG, LOG_TAG, "b larger");
+      // dlog_print (DLOG_DEBUG, LOG_TAG, "b larger");
       return 1;
     }
   else
     {
-     // dlog_print (DLOG_DEBUG, LOG_TAG, "a = b");
+      // dlog_print (DLOG_DEBUG, LOG_TAG, "a = b");
       return 0;
     }
   //TODO the underlying order of the entries are not changed
@@ -147,9 +148,9 @@ _display_rss_items (gpointer feed_list, gpointer input_ad)
 
 
   (void) elm_genlist_item_append (ad->item_list, ad->itc,
-					  feed_item, NULL,
-					  ELM_GENLIST_ITEM_NONE,
-					  cb_rss_item_clicked, input_ad);
+				  feed_item, NULL,
+				  ELM_GENLIST_ITEM_NONE,
+				  cb_rss_item_clicked, input_ad);
 }
 
 static void
@@ -195,18 +196,20 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
     }
   else
     {
-		if(err == 9)
-		{
-			sprintf (error_text, "Incompatible feed: %s", feed_to_parse->name);
-		}
-		else
-		{
-			sprintf (error_text, "Error retrieving feed: %s", feed_to_parse->name);
-		}
+      if (err == 9)
+	{
+	  sprintf (error_text, "Incompatible encoding in feed: %s",
+		   feed_to_parse->name);
+	}
+      else
+	{
+	  sprintf (error_text, "Error retrieving feed: %s",
+		   feed_to_parse->name);
+	}
       error_popup = elm_popup_add (ad->nf);
       elm_object_style_set (error_popup, "toast");
       elm_object_text_set (error_popup, error_text);
-      elm_popup_timeout_set (error_popup, 2.0);
+      elm_popup_timeout_set (error_popup, 3.0);
       eext_object_event_callback_add (error_popup, EEXT_CALLBACK_BACK,
 				      eext_popup_back_cb, NULL);
       evas_object_smart_callback_add (error_popup, "timeout",
@@ -224,7 +227,7 @@ button_back_create (appdata_s * ad)
   evas_object_smart_callback_add (button_back, "clicked",
 				  cb_button_back_clicked, ad);
   elm_object_style_set (button_back, "naviframe/title_left");
-  elm_object_text_set(button_back,"Back");
+  elm_object_text_set (button_back, "Back");
 
   return button_back;
 }
@@ -294,16 +297,16 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   Evas *evas_canvas;
   int clicked_index;
 
-  char* html_string;
+  char *html_string;
   size_t len_description, len_content, len_pubdate, len_title, len_total;
 
   elm_genlist_item_selected_set (event_info, EINA_FALSE);
 
   feed_item = ad->rss_items;
-  
 
 
-  
+
+
 
 
   clicked_index = elm_genlist_item_index_get (event_info);
@@ -311,37 +314,38 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   button_back = button_back_create (ad);
 
-  /*calc length of body and allocate memory*/
-  
-  len_title = strlen(item_content->title);
-  len_pubdate = strlen(item_content->pubDate);
+  /*calc length of body and allocate memory */
+
+  len_title = strlen (item_content->title);
+  len_pubdate = strlen (item_content->pubDate);
 
 
   if (item_content->description)
     {
-		len_description = strlen(item_content->description);
-		  if (item_content->content)
-		{
-		len_content = strlen(item_content->content);
-		len_total = len_description+len_content+len_title+len_pubdate+26;
-		}
-		else
-		{
-			len_total = len_description+len_title+len_pubdate+25;
-		}
+      len_description = strlen (item_content->description);
+      if (item_content->content)
+	{
+	  len_content = strlen (item_content->content);
+	  len_total =
+	    len_description + len_content + len_title + len_pubdate + 26;
+	}
+      else
+	{
+	  len_total = len_description + len_title + len_pubdate + 25;
+	}
     }
   else if (item_content->content)
     {
-		len_content = strlen(item_content->content);
-		len_total = len_content+len_title+len_pubdate+25;
-		
+      len_content = strlen (item_content->content);
+      len_total = len_content + len_title + len_pubdate + 25;
+
     }
   else
-	{
-		len_total = len_title+len_pubdate+24;
-	}
-    
-  html_string = malloc(sizeof(char) * len_total);
+    {
+      len_total = len_title + len_pubdate + 24;
+    }
+
+  html_string = malloc (sizeof (char) * len_total);
 
 
   /*web view */
@@ -360,9 +364,9 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
   dlog_print (DLOG_DEBUG, LOG_TAG, "html_string lentgh:");
   char lenn[20];
-  snprintf(lenn, 20, "%d",len_total);
-  dlog_print (DLOG_DEBUG, LOG_TAG, lenn); 
-  strcpy (html_string, "<h3>"); //TODO replace strcpy and cat with snprintf
+  snprintf (lenn, 20, "%d", len_total);
+  dlog_print (DLOG_DEBUG, LOG_TAG, lenn);
+  strcpy (html_string, "<h3>");	//TODO replace strcpy and cat with snprintf
   strcat (html_string, item_content->title);
   strcat (html_string, "</h3>");
   strcat (html_string, "<h4>");
@@ -378,7 +382,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
     {
       strcat (html_string, item_content->content);
     }
- 
+
   ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);
 
   /*scroller */
@@ -397,7 +401,8 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   evas_object_show (label_item_content);
 
 
-  (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL, bg, NULL);
+  (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL,
+				  bg, NULL);
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
   dlog_print (DLOG_DEBUG, LOG_TAG, "rss item callback click");
 
@@ -420,33 +425,33 @@ cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   GSList *feed_list;
 
   feed_list = ad->feeds;
-  
+
   ad->rss_items = NULL;
   rss_items = ad->rss_items;
 
   elm_genlist_clear (ad->item_list);
 
   if (feed_list != NULL)
-  {
-  g_slist_foreach (feed_list, feed_list_parse, ad);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "feed parsed");
+    {
+      g_slist_foreach (feed_list, feed_list_parse, ad);
+      dlog_print (DLOG_DEBUG, LOG_TAG, "feed parsed");
 
 
-  rss_items = ad->rss_items;
+      rss_items = ad->rss_items;
 
-  rss_items = g_slist_sort (rss_items, sort_rss_items);
-  ad->rss_items = rss_items;
- 
-  g_slist_foreach (rss_items, _display_rss_items, ad);
+      rss_items = g_slist_sort (rss_items, sort_rss_items);	//crash is here when encoding is not utf8
+      ad->rss_items = rss_items;
 
-  elm_genlist_item_show (elm_genlist_first_item_get (ad->item_list),
-			 ELM_GENLIST_ITEM_SCROLLTO_IN);
+      g_slist_foreach (rss_items, _display_rss_items, ad);
 
-	}
-	else
-	{
-		dlog_print (DLOG_DEBUG, LOG_TAG, "nothing to update");
-	}
+      elm_genlist_item_show (elm_genlist_first_item_get (ad->item_list),
+			     ELM_GENLIST_ITEM_SCROLLTO_IN);
+
+    }
+  else
+    {
+      dlog_print (DLOG_DEBUG, LOG_TAG, "nothing to update");
+    }
 }
 
 void
@@ -463,7 +468,7 @@ cb_button_options_clicked (void *input_ad, Evas_Object * obj,
   evas_object_smart_callback_add (ad->button_add_feed, "clicked",
 				  cb_button_add_feed_clicked, ad);
   elm_object_style_set (ad->button_add_feed, "naviframe/title_right");
-  elm_object_text_set(ad->button_add_feed,"Add");
+  elm_object_text_set (ad->button_add_feed, "Add");
 
   button_back = button_back_create (ad);
 
@@ -535,8 +540,7 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   evas_object_show (ad->entry_name);
 
   /*rss entry */
-  ad->entry_rss =
-    create_singleline_editfield_layout (add_box, "Feed URL");
+  ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
   elm_box_pack_end (add_box, ad->entry_rss);
   evas_object_show (ad->entry_rss);
 
@@ -550,7 +554,7 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   evas_object_size_hint_align_set (add_button, 0.1, 0.0);
   evas_object_size_hint_weight_set (add_button, EVAS_HINT_EXPAND, 0.0);
-  evas_object_size_hint_min_set(add_button, 300,100);
+  evas_object_size_hint_min_set (add_button, 300, 100);
   evas_object_show (add_button);
 
   /*back button */
@@ -560,7 +564,7 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   nf_options =
     elm_naviframe_item_push (ad->nf, "Add feed", button_back, NULL, bg, NULL);
-    elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
+  elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
 
 
 }
@@ -688,12 +692,13 @@ cb_popup1 (void *input_ad, Evas_Object * obj, void *event_info)
   button_back = button_back_create (ad);
   box = elm_box_add (bg);
   about_label = elm_label_add (box);
-  sprintf(about_string, "<font_size=50><color=#000000>Breeze %s</font_size>"
-		       "<font_size=30><br>Copyright © 2017 Henrik Ullman"
-		       "<br>Licence:GNU General Public Licence v3"
-		       "<br>Libraries:"
-		       "<br>libnxml © 2008  Andrea Marchesini - LGPL 2.0 "
-		       "<br>libmrss © 2008  Andrea Marchesini - LGPL 2.0 </color></font_size>",VERSION);
+  sprintf (about_string, "<font_size=50><color=#000000>Breeze %s</font_size>"
+	   "<font_size=30><br>Copyright © 2017 Henrik Ullman"
+	   "<br>Licence:GNU General Public Licence v3"
+	   "<br>Libraries:"
+	   "<br>libnxml © 2008  Andrea Marchesini - LGPL 2.0 "
+	   "<br>libmrss © 2008  Andrea Marchesini - LGPL 2.0 </color></font_size>",
+	   VERSION);
   elm_object_text_set (about_label, about_string);
   evas_object_show (about_label);
   evas_object_show (box);
