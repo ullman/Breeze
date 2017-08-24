@@ -51,6 +51,7 @@ typedef struct
   Elm_Genlist_Item_Class *itc;
   Elm_Genlist_Item_Class *itc_feeds;
   char database[100];
+  char error_text[500];
   unsigned int clicked_index;
 } appdata_s;
 

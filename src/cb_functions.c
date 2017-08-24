@@ -182,8 +182,7 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
   feed_s *feed_to_parse;
   GSList *rss_items;
   int err;
-  Evas_Object *error_popup;
-  char error_text[100];
+  char error_str[100];
 
   rss_items = ad->rss_items;
   feed_to_parse = feed_item;
@@ -198,23 +197,23 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
     {
       if (err == 9)
 	{
-	  sprintf (error_text, "Incompatible encoding in feed: %s",
+	  sprintf (error_str, "Incompatible encoding in feed: %s \n",
 		   feed_to_parse->name);
+	  strcat (ad->error_text, error_str);
+
+	}
+      else if (err == MRSS_ERR_DOWNLOAD)
+	{
+	  sprintf (error_str, "Download timeout for feed: %s \n",
+		   feed_to_parse->name);
+	  strcat (ad->error_text, error_str);
 	}
       else
 	{
-	  sprintf (error_text, "Error retrieving feed: %s",
+	  sprintf (error_str, "Error retrieving feed: %s \n",
 		   feed_to_parse->name);
+	  strcat (ad->error_text, error_str);
 	}
-      error_popup = elm_popup_add (ad->nf);
-      elm_object_style_set (error_popup, "toast");
-      elm_object_text_set (error_popup, error_text);
-      elm_popup_timeout_set (error_popup, 3.0);
-      eext_object_event_callback_add (error_popup, EEXT_CALLBACK_BACK,
-				      eext_popup_back_cb, NULL);
-      evas_object_smart_callback_add (error_popup, "timeout",
-				      eext_popup_back_cb, NULL);
-      evas_object_show (error_popup);
     }
 }
 
@@ -417,8 +416,8 @@ cb_button_back_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   elm_naviframe_item_pop (ad->nf);
 }
 
-void
-cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
+static void
+thread_update_run (void *input_ad, Ecore_Thread * thread)
 {
   appdata_s *ad = input_ad;
   GSList *rss_items;
@@ -428,8 +427,6 @@ cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   ad->rss_items = NULL;
   rss_items = ad->rss_items;
-
-  elm_genlist_clear (ad->item_list);
 
   if (feed_list != NULL)
     {
@@ -442,16 +439,62 @@ cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
       rss_items = g_slist_sort (rss_items, sort_rss_items);	//crash is here when encoding is not utf8
       ad->rss_items = rss_items;
 
-      g_slist_foreach (rss_items, _display_rss_items, ad);
-
-      elm_genlist_item_show (elm_genlist_first_item_get (ad->item_list),
-			     ELM_GENLIST_ITEM_SCROLLTO_IN);
-
     }
   else
     {
       dlog_print (DLOG_DEBUG, LOG_TAG, "nothing to update");
     }
+}
+
+static void
+thread_update_end (void *input_ad, Ecore_Thread * thread)
+{
+  appdata_s *ad = input_ad;
+  Evas_Object *error_popup;
+
+  /*all UI operations should be here as GUI is not thread safe */
+
+  elm_genlist_clear (ad->item_list);
+  if (ad->feeds != NULL)
+    {
+      g_slist_foreach (ad->rss_items, _display_rss_items, ad);
+
+      elm_genlist_item_show (elm_genlist_first_item_get (ad->item_list),
+			     ELM_GENLIST_ITEM_SCROLLTO_IN);
+      if (ad->error_text[0] != '\0')
+	{
+	  error_popup = elm_popup_add (ad->nf);
+	  elm_object_style_set (error_popup, "toast");
+	  elm_object_text_set (error_popup, ad->error_text);
+	  elm_popup_timeout_set (error_popup, 3.0);
+	  eext_object_event_callback_add (error_popup, EEXT_CALLBACK_BACK,
+					  eext_popup_back_cb, NULL);
+	  evas_object_smart_callback_add (error_popup, "timeout",
+					  eext_popup_back_cb, NULL);
+	  evas_object_show (error_popup);
+	}
+    }
+  dlog_print (DLOG_DEBUG, LOG_TAG, "thread has ended");
+}
+
+static void
+thread_update_cancel (void *input_ad, Ecore_Thread * thread)
+{
+  dlog_print (DLOG_DEBUG, LOG_TAG, "thread has been cancelled");
+}
+
+void
+cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
+{
+  Ecore_Thread *update_thread;
+  appdata_s *ad = input_ad;
+
+  ad->error_text[0] = '\0';
+
+  update_thread =
+    ecore_thread_run (thread_update_run, thread_update_end,
+		      thread_update_cancel, input_ad);
+  dlog_print (DLOG_DEBUG, LOG_TAG, "update thread was sent off");
 }
 
 void

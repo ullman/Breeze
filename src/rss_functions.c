@@ -18,7 +18,6 @@ char *
 rep_str (char *target, size_t target_len, const char *sub, const char *repl)
 {
   static char buffer[1000];	// remove static with malloc
-  //char buffer[target_len+1];
   char *l;
 
   strcpy (buffer, target);
@@ -53,7 +52,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   feed_url = rss_feed->url;
 
 
-  feed_options = mrss_options_new (3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);	//3 sec timeout
+  feed_options = mrss_options_new (10, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);	//10 sec timeout
 
 
   feed_url = rep_str (feed_url, strlen (feed_url), "&amp;", "&");	//is replaced in database
@@ -62,6 +61,13 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
 					       &feed_data, feed_options,
 					       &code);
 
+  dlog_print (DLOG_DEBUG, LOG_TAG, "exited mrss_parse_url");
+
+  if (err == MRSS_ERR_DOWNLOAD)
+    {
+      dlog_print (DLOG_DEBUG, LOG_TAG, "MRSS_ERR_DOWNLOAD");
+      return MRSS_ERR_DOWNLOAD;
+    }
   if (feed_data->encoding == NULL)
     {
       dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is NULL, assuming utf8");
