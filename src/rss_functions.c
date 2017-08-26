@@ -14,28 +14,6 @@ License: GPL Version 3
 
 
 
-char *
-rep_str (char *target, size_t target_len, const char *sub, const char *repl)
-{
-  static char buffer[1000];	// remove static with malloc
-  char *l;
-
-  strcpy (buffer, target);
-
-  if (!(l = strstr (target, sub)))
-    {
-
-      return buffer;
-    }
-  strncpy (buffer, target, l - target);
-  buffer[l - target] = '\0';
-  sprintf (buffer + (l - target), "%s%s", repl, l + strlen (sub));
-
-  return rep_str (buffer, strlen (buffer), sub, repl);
-
-}
-
-
 int
 crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
 {
@@ -55,7 +33,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   feed_options = mrss_options_new (10, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);	//10 sec timeout
 
 
-  feed_url = rep_str (feed_url, strlen (feed_url), "&amp;", "&");	//is replaced in database
+  feed_url = elm_entry_markup_to_utf8(feed_url);
   //TODO add error if network is not setup
   err = mrss_parse_url_with_options_and_error (feed_url,
 					       &feed_data, feed_options,

@@ -14,13 +14,6 @@ License: GPL Version 3
 #include "database.h"
 
 
-
-typedef struct _text_item
-{
-  char text[100];
-} text_item;
-
-
 int
 exists (const char *fname)
 {
@@ -46,7 +39,7 @@ item_label_get (void *data, Evas_Object * obj, const char *part)
       if (this_item->title)
 	{
 
-	  return strdup (this_item->title);	//Genlist fails to display "&"
+	  return strdup (elm_entry_utf8_to_markup(this_item->title));//TODO free this somewhere
 	}
       else
 	return strdup ("error: no title");
