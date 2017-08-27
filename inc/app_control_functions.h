@@ -4,7 +4,7 @@ License: GPL Version 3
 */
 #ifndef __APP_CONTROL_FUNCTIONS_H__
 #define __APP_CONTROL_FUNCTIONS_H__
-
+#ifdef TIZEN
 
 void win_delete_request_cb (void *data, Evas_Object * obj, void *event_info);
 
@@ -34,7 +34,7 @@ void ui_app_low_battery (app_event_info_h event_info, void *user_data);
 
 void ui_app_low_memory (app_event_info_h event_info, void *user_data);
 
-
+#endif
 
 
 #endif /* __APP_CONTROL_FUNCTIONS_H__ */

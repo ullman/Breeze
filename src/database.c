@@ -26,7 +26,7 @@ database_create (char *database_name)
 
   if (db_err != SQLITE_OK)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "database create error");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "database create error");
     }
 
 }
@@ -45,16 +45,16 @@ database_add_feed (char *database_name, feed_s * feed)
   db_err = sqlite3_open (database_name, &db_handle);
   if (db_err != SQLITE_OK)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "database opening error");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "database opening error");
     }
   snprintf (sql, SQL_SIZE, "INSERT INTO ex(NAME,URL) " "VALUES('%s','%s');",
 	    feed->name, feed->url);
-  dlog_print (DLOG_DEBUG, LOG_TAG, sql);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, sql);
   db_err = sqlite3_exec (db_handle, sql, 0, 0, &err_msg);
   if (db_err != SQLITE_OK)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "database write error");
-      dlog_print (DLOG_DEBUG, LOG_TAG, err_msg);
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "database write error");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, err_msg);
     }
   sqlite3_close (db_handle);
 

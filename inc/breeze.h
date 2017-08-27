@@ -5,24 +5,35 @@ License: GPL Version 3
 #ifndef __BREEZE_H__
 #define __BREEZE_H__
 
+#ifdef TIZEN
+
 #include <app.h>
-#include <Elementary.h>
 #include <system_settings.h>
 #include <efl_extension.h>
 #include <dlog.h>
-#include <glib.h>
 
 #ifdef  LOG_TAG
 #undef  LOG_TAG
 #endif
 #define LOG_TAG "breeze"
 
+
+
+
+#endif
+
 #if !defined(PACKAGE)
 #define PACKAGE "kr.ullman.breeze"
 #endif
+
 #if !defined(VERSION)
 #define VERSION "0.1.0"
 #endif
+
+#include <Elementary.h>
+#include <glib.h>
+
+
 
 
 typedef struct

@@ -3,7 +3,9 @@ Copyright (C) 2017  Henrik Ullman
 License: GPL Version 3
 */
 #define _GNU_SOURCE
+#ifdef TIZEN
 #include <EWebKit.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -107,8 +109,9 @@ editfield_clear_button_clicked_cb (void *data, Evas_Object * obj,
 }
 
 static Evas_Object *
-create_singleline_editfield_layout (Evas_Object * parent, char *title)
+create_singleline_editfield_layout (Evas_Object * parent, char *title)//TODO rewrite sometime
 {
+  #ifdef TIZEN
   Evas_Object *editfield, *entry, *button;
 
   editfield = elm_layout_add (parent);
@@ -135,8 +138,21 @@ create_singleline_editfield_layout (Evas_Object * parent, char *title)
   evas_object_smart_callback_add (button, "clicked",
 				  editfield_clear_button_clicked_cb, entry);
   elm_object_part_content_set (editfield, "elm.swallow.button", button);
+ 
+  return editfield; 
+ #else
+ Evas_Object* entry;
+ entry=elm_entry_add(parent);
+ 
+ elm_object_part_text_set (entry, "elm.guide", title);
+ elm_object_style_set(entry,"base-single/default");
+ evas_object_size_hint_align_set (entry, EVAS_HINT_FILL, 0.0);
+ evas_object_size_hint_weight_set (entry, EVAS_HINT_EXPAND, 0.0);
+ 
+ return entry;
+ #endif
 
-  return editfield;
+ 
 }
 
 static void
@@ -162,8 +178,8 @@ feed_list_update (gpointer feed_item, gpointer input_ad)
   feed_to_add = feed_item;
 
   ad = input_ad;
-  dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_update");
-  dlog_print (DLOG_DEBUG, LOG_TAG, feed_to_add->name);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_update");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, feed_to_add->name);
   //TODO combine this with crss function
   entry_handle = elm_genlist_item_append (ad->genlist_feeds, ad->itc_feeds,
 					  feed_to_add, NULL,
@@ -171,7 +187,7 @@ feed_list_update (gpointer feed_item, gpointer input_ad)
 					  cb_press_feed, ad);
 
   elm_genlist_item_show (entry_handle, ELM_GENLIST_ITEM_SCROLLTO_IN);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_update done");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_update done");
 
 }
 
@@ -186,8 +202,8 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
 
   rss_items = ad->rss_items;
   feed_to_parse = feed_item;
-  dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_parse");
-  dlog_print (DLOG_DEBUG, LOG_TAG, feed_to_parse->url);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_parse");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, feed_to_parse->url);
   err = crss_parse_feed (feed_to_parse, &rss_items);
   if (err == 0)
     {
@@ -248,28 +264,30 @@ cb_button_add_entry_clicked (void *input_ad, Evas_Object * obj,
   const char *input_rss;
 
 
-  dlog_print (DLOG_DEBUG, LOG_TAG, "cb_button_add_entry_clicked");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "cb_button_add_entry_clicked");
   ad = input_ad;
   feed_list = ad->feeds;
 
 
 
-  entry_name =
-    elm_object_part_content_get (ad->entry_name, "elm.swallow.content");
-  entry_rss =
-    elm_object_part_content_get (ad->entry_rss, "elm.swallow.content");
-  input_name = elm_entry_entry_get (entry_name);
-  input_rss = elm_entry_entry_get (entry_rss);
+  //entry_name =
+    //elm_object_part_content_get (ad->entry_name, "elm.swallow.content");
+  input_name =  elm_object_part_text_get (ad->entry_name,NULL);
+  //entry_rss =
+    //elm_object_part_content_get (ad->entry_rss, "elm.swallow.content");
+  input_rss=  elm_object_part_text_get (ad->entry_rss,NULL);
+  //input_name = elm_entry_entry_get (entry_name);
+  //input_rss = elm_entry_entry_get (entry_rss);
 
 
-  dlog_print (DLOG_DEBUG, LOG_TAG, input_name);
-  dlog_print (DLOG_DEBUG, LOG_TAG, input_rss);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, input_name);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, input_rss);
   crss_add_feed (input_rss, input_name, &feed_list);	//TODO: this should pickup the proper values
-  dlog_print (DLOG_DEBUG, LOG_TAG, "crss_add_feed finished");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "crss_add_feed finished");
 
   last_in_list = g_slist_last (feed_list);
   feed_item = last_in_list->data;
-  dlog_print (DLOG_DEBUG, LOG_TAG, feed_item->url);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, feed_item->url);
   database_add_feed (ad->database, feed_item);
 
   /*add item to genlist *///TODO: move this to crss_add_feed function
@@ -288,7 +306,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 {
   appdata_s *ad = input_ad;
   Evas_Object *button_back;
-  Evas_Object *label_item_content;
+  //Evas_Object *label_item_content;
   GSList *feed_item;
   mrss_item_t *item_content;
   Evas_Object *bg;
@@ -350,21 +368,21 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   /*web view */
 
   evas_canvas = evas_object_evas_get (ad->nf);
-  label_item_content = ewk_view_add (evas_canvas);
-  ewk_settings_default_font_size_set (ewk_view_settings_get
-				      (label_item_content), 45);
+  //label_item_content = ewk_view_add (evas_canvas);//TODO
+  //ewk_settings_default_font_size_set (ewk_view_settings_get //TODO
+  //				      (label_item_content), 45);
 
 
   //TODO: add display of description
 
-  evas_object_size_hint_align_set (label_item_content, EVAS_HINT_FILL, 0);
-  evas_object_size_hint_weight_set (label_item_content, EVAS_HINT_FILL,
-				    EVAS_HINT_EXPAND);
-  elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "html_string lentgh:");
+  //evas_object_size_hint_align_set (label_item_content, EVAS_HINT_FILL, 0);
+  //evas_object_size_hint_weight_set (label_item_content, EVAS_HINT_FILL,
+  //				    EVAS_HINT_EXPAND);
+  //elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "html_string lentgh:");
   char lenn[20];
   snprintf (lenn, 20, "%d", len_total);
-  dlog_print (DLOG_DEBUG, LOG_TAG, lenn);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, lenn);
   strcpy (html_string, "<h3>");	//TODO replace strcpy and cat with snprintf
   strcat (html_string, item_content->title);
   strcat (html_string, "</h3>");
@@ -382,12 +400,12 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
       strcat (html_string, item_content->content);
     }
 
-  ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);
+  //ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);//TODO
 
   /*scroller */
 
   scroller = elm_scroller_add (ad->nf);
-  elm_object_content_set (scroller, label_item_content);
+  //elm_object_content_set (scroller, label_item_content);
 
   /*background */
   bg = elm_bg_add (ad->nf);
@@ -397,13 +415,13 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   elm_object_part_content_set (bg, "overlay", scroller);
   evas_object_show (bg);
   evas_object_show (scroller);
-  evas_object_show (label_item_content);
+  //evas_object_show (label_item_content);
 
 
   (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL,
 				  bg, NULL);
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "rss item callback click");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "rss item callback click");
 
 
 }
@@ -412,7 +430,7 @@ void
 cb_button_back_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 {
   appdata_s *ad = input_ad;
-  dlog_print (DLOG_DEBUG, LOG_TAG, "popping naviframe");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "popping naviframe");
   elm_naviframe_item_pop (ad->nf);
 }
 
@@ -431,7 +449,7 @@ thread_update_run (void *input_ad, Ecore_Thread * thread)
   if (feed_list != NULL)
     {
       g_slist_foreach (feed_list, feed_list_parse, ad);
-      dlog_print (DLOG_DEBUG, LOG_TAG, "feed parsed");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "feed parsed");
 
 
       rss_items = ad->rss_items;
@@ -442,7 +460,7 @@ thread_update_run (void *input_ad, Ecore_Thread * thread)
     }
   else
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "nothing to update");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "nothing to update");
     }
 }
 
@@ -467,20 +485,24 @@ thread_update_end (void *input_ad, Ecore_Thread * thread)
 	  elm_object_style_set (error_popup, "toast");
 	  elm_object_text_set (error_popup, ad->error_text);
 	  elm_popup_timeout_set (error_popup, 3.0);
+#ifdef TIZEN
 	  eext_object_event_callback_add (error_popup, EEXT_CALLBACK_BACK,
 					  eext_popup_back_cb, NULL);
+
 	  evas_object_smart_callback_add (error_popup, "timeout",
 					  eext_popup_back_cb, NULL);
+#endif
 	  evas_object_show (error_popup);
+
 	}
     }
-  dlog_print (DLOG_DEBUG, LOG_TAG, "thread has ended");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "thread has ended");
 }
 
 static void
 thread_update_cancel (void *input_ad, Ecore_Thread * thread)
 {
-  dlog_print (DLOG_DEBUG, LOG_TAG, "thread has been cancelled");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "thread has been cancelled");
 }
 
 void
@@ -494,7 +516,7 @@ cb_button_update_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   update_thread =
     ecore_thread_run (thread_update_run, thread_update_end,
 		      thread_update_cancel, input_ad);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "update thread was sent off");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "update thread was sent off");
 }
 
 void
@@ -540,7 +562,7 @@ cb_button_options_clicked (void *input_ad, Evas_Object * obj,
   //TODO: add already updated feeds
   if (ad->feeds == NULL)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "feed list is NULL");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "feed list is NULL");
     }
   g_slist_foreach (ad->feeds, feed_list_update, ad);
 }
@@ -553,7 +575,7 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   appdata_s *ad;
   GSList *feed_list;
   Elm_Object_Item *nf_options;
-  dlog_print (DLOG_DEBUG, LOG_TAG, "adding feed");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "adding feed");
   ad = input_ad;
   feed_list = ad->feeds;
 
@@ -621,7 +643,7 @@ cb_press_feed (void *input_ad, Evas_Object * obj, void *event_info)
 
   sprintf (popup_text, "Do you want to delete %s?",
 	   elm_object_item_part_text_get (event_info, "elm.text"));
-  dlog_print (DLOG_DEBUG, LOG_TAG, "press_feed running");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "press_feed running");
   ad->delete_popup = elm_popup_add (ad->nf);
   elm_object_part_text_set (ad->delete_popup, "title,text",
 			    "Confirm deletion");
@@ -654,7 +676,7 @@ void
 cb_button_delete_entry_clicked (void *input_ad, Evas_Object * obj,
 				void *event_info)
 {
-  dlog_print (DLOG_DEBUG, LOG_TAG, "delete callback clicked");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "delete callback clicked");
   appdata_s *ad;
   ad = input_ad;
   GSList *feed_list;
@@ -671,15 +693,16 @@ void
 cb_button_entry_released (void *input_ad, Evas_Object * obj, void *event_info)
 {
   Eina_Bool activated = elm_genlist_item_selected_get (event_info);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "released callback clicked");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "released callback clicked");
 
   if (activated == EINA_FALSE)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "activated is true");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "activated is true");
       elm_genlist_item_selected_set (event_info, EINA_TRUE);
     }
 }
 
+#ifdef TIZEN
 void
 create_popup_menu (appdata_s * ad)
 {
@@ -698,7 +721,7 @@ create_popup_menu (appdata_s * ad)
       elm_win_screen_size_get (ad->win, NULL, NULL, &w, &h);
 
       elm_ctxpopup_item_append (ad->popup_menu, "About", NULL, cb_popup1, ad);
-      elm_object_style_set (ad->popup_menu, "more/default");
+      elm_object_style_set (ad->popup_menu, "more/default");//TODO
 
       elm_ctxpopup_direction_priority_set (ad->popup_menu,
 					   ELM_CTXPOPUP_DIRECTION_UP,
@@ -714,6 +737,7 @@ create_popup_menu (appdata_s * ad)
     }
 
 }
+#endif
 
 void
 cb_popup1 (void *input_ad, Evas_Object * obj, void *event_info)
@@ -772,6 +796,7 @@ cb_popup_dismissed (void *input_ad, Evas_Object * obj, void *event_info)
   evas_object_del (ad->delete_popup);
 }
 
+#ifdef TIZEN
 Eina_Bool
 cb_hardware_key (void *input_ad, int type, void *ev)
 {
@@ -784,3 +809,4 @@ cb_hardware_key (void *input_ad, int type, void *ev)
     }
   return ECORE_CALLBACK_PASS_ON;
 }
+#endif

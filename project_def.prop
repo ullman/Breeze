@@ -18,7 +18,7 @@ USER_EDCS =
 USER_POS = 
 
 # User Defines
-USER_DEFS = 
+USER_DEFS = TIZEN
 USER_CPP_DEFS = 
 
 # User Undefines

@@ -39,16 +39,16 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
 					       &feed_data, feed_options,
 					       &code);
 
-  dlog_print (DLOG_DEBUG, LOG_TAG, "exited mrss_parse_url");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "exited mrss_parse_url");
 
   if (err == MRSS_ERR_DOWNLOAD)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "MRSS_ERR_DOWNLOAD");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "MRSS_ERR_DOWNLOAD");
       return MRSS_ERR_DOWNLOAD;
     }
   if (feed_data->encoding == NULL)
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is NULL, assuming utf8");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is NULL, assuming utf8");
       feed_data->encoding = "utf-8";
     }
   else if (!strcmp (feed_data->encoding, "UTF-8"))
@@ -60,8 +60,9 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   //rss_feed->icon = feed_data->image_url;
   //dlog_print(DLOG_DEBUG, LOG_TAG, "image url:");
   //dlog_print(DLOG_DEBUG, LOG_TAG, rss_feed->icon);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is");
-  dlog_print (DLOG_DEBUG, LOG_TAG, feed_data->encoding);
+  
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, feed_data->encoding);
   if (err == MRSS_OK && !strcmp (feed_data->encoding, "utf-8"))
     {
       for (feed_item = feed_data->item; feed_item;
@@ -82,7 +83,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
     }
   else
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "feed parse error");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "feed parse error");
       return 1;
     }
 
@@ -124,7 +125,7 @@ crss_delete_feed (void *input_ad, unsigned int rss_feed, char *database_name,
 
   char rss_temp[10];
   sprintf (rss_temp, "%d", rss_feed - 1);
-  dlog_print (DLOG_DEBUG, LOG_TAG, rss_temp);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, rss_temp);
   Evas_Object *delete_feed;
   delete_feed = elm_genlist_nth_item_get (ad->genlist_feeds, rss_feed - 1);
   elm_object_item_del (delete_feed);

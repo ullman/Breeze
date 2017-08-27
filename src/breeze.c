@@ -2,9 +2,12 @@
 Copyright (C) 2017  Henrik Ullman
 License: GPL Version 3
 */
+#ifdef TIZEN
 #include <efl_extension.h>
-#include <glib.h>
 #include <app_common.h>
+#endif
+#include <glib.h>
+
 
 #include "breeze.h"
 #include "app_control_functions.h"
@@ -105,8 +108,10 @@ create_base_gui (appdata_s * ad)
 						   (const int *) (&rots), 4);
     }
 
+#ifdef TIZEN
   evas_object_smart_callback_add (ad->win, "delete,request",
 				  win_delete_request_cb, NULL);
+#endif
 
   /* Conformant */
   ad->conform = elm_conformant_add (ad->win);
@@ -122,8 +127,10 @@ create_base_gui (appdata_s * ad)
   /*create naviframe */
   ad->nf = elm_naviframe_add (ad->conform);
   elm_object_part_content_set (ad->layout, "item_list", ad->nf);
+  #ifdef TIZEN
   eext_object_event_callback_add (ad->nf, EEXT_CALLBACK_BACK,
 				  eext_naviframe_back_cb, ad);
+  #endif
   evas_object_size_hint_weight_set (ad->nf, EVAS_HINT_EXPAND,
 				    EVAS_HINT_EXPAND);
   elm_object_content_set (ad->conform, ad->nf);
@@ -183,26 +190,32 @@ create_base_gui (appdata_s * ad)
 
   /* create database if not exists */
 
+  #ifdef TIZEN
   data_folder = app_get_data_path ();
+  #else
+  data_folder = "./";
+  #endif
   strcpy (ad->database, data_folder);
   strcat (ad->database, "breeze.db");
-  dlog_print (DLOG_DEBUG, LOG_TAG, ad->database);
+  //dlog_print (DLOG_DEBUG, LOG_TAG, ad->database);
   if (!exists (ad->database))
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "database does not exist");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "database does not exist");
       database_create (ad->database);
     }
   else
     {
-      dlog_print (DLOG_DEBUG, LOG_TAG, "database exists");
+      //dlog_print (DLOG_DEBUG, LOG_TAG, "database exists");
       /*load feeds from database */
       database_load_feeds (ad->database, ad);
     }
 
   elm_naviframe_item_pop_cb_set (nf_it, naviframe_pop_cb, ad);
   /*popup menu */
+  #ifdef TIZEN
   ecore_event_handler_add (ECORE_EVENT_KEY_DOWN, cb_hardware_key, ad);
   eext_win_keygrab_set (ad->win, "XF86Menu");
+  #endif
 
   /* Show window after base gui is set up */
   evas_object_show (ad->button_update);
@@ -212,13 +225,13 @@ create_base_gui (appdata_s * ad)
   evas_object_show (bg);
   evas_object_show (ad->nf);
   evas_object_show (ad->win);
-  dlog_print (DLOG_DEBUG, LOG_TAG, "ut is setup");
+  //dlog_print (DLOG_DEBUG, LOG_TAG, "ut is setup");
 
 }
 
 
 
-
+#ifdef TIZEN
 int
 main (int argc, char *argv[])
 {
@@ -257,3 +270,42 @@ main (int argc, char *argv[])
 
   return ret;
 }
+#else
+
+//TODO write new main function here
+
+
+EAPI_MAIN int
+elm_main(int argc, char **argv)
+{
+   //Evas_Object *win, *btn;
+
+   appdata_s ad = { 0, };
+   appdata_s *ad_real;
+   ad_real = &ad;
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   //win = elm_win_util_standard_add("Main", "Hello, World!");
+   //elm_win_autodel_set(win, EINA_TRUE);
+
+   //btn = elm_button_add(win);
+   //elm_object_text_set(btn, "Goodbye Cruel World");
+   //elm_win_resize_object_add(win, btn);
+   //evas_object_smart_callback_add(btn, "clicked", on_click, win);
+   //evas_object_show(btn);
+
+   //evas_object_show(win);
+
+   create_base_gui(ad_real);
+
+
+   elm_run();
+
+   return 0;
+}
+ELM_MAIN()
+
+#endif
+
+
+

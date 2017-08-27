@@ -3,6 +3,8 @@ Copyright (C) 2017  Henrik Ullman
 License: GPL Version 3
 */
 #include "breeze.h"
+
+#ifdef TIZEN
 #include "app_control_functions.h"
 
 
@@ -113,3 +115,7 @@ ui_app_low_memory (app_event_info_h event_info, void *user_data)
 {
   /*APP_EVENT_LOW_MEMORY */
 }
+
+
+
+#endif
