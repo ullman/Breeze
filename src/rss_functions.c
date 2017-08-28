@@ -38,6 +38,8 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   err = mrss_parse_url_with_options_and_error (feed_url,
 					       &feed_data, feed_options,
 					       &code);
+					      
+  printf("%i\n", err);
 
   //dlog_print (DLOG_DEBUG, LOG_TAG, "exited mrss_parse_url");
 
@@ -46,6 +48,11 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
       //dlog_print (DLOG_DEBUG, LOG_TAG, "MRSS_ERR_DOWNLOAD");
       return MRSS_ERR_DOWNLOAD;
     }
+  else if(err !=MRSS_OK)
+  {
+	  return 1;
+  }
+  
   if (feed_data->encoding == NULL)
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is NULL, assuming utf8");
@@ -84,6 +91,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   else
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "feed parse error");
+      
       return 1;
     }
 

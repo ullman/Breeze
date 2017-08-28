@@ -5,11 +5,14 @@ License: GPL Version 3
 #define _GNU_SOURCE
 #ifdef TIZEN
 #include <EWebKit.h>
+#else
+#include <EWebKit2.h>
 #endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <glib.h>
+
 
 #include "breeze.h"
 #include "app_control_functions.h"
@@ -111,7 +114,7 @@ editfield_clear_button_clicked_cb (void *data, Evas_Object * obj,
 static Evas_Object *
 create_singleline_editfield_layout (Evas_Object * parent, char *title)//TODO rewrite sometime
 {
-  #ifdef TIZEN
+  #ifdef TIZENNO
   Evas_Object *editfield, *entry, *button;
 
   editfield = elm_layout_add (parent);
@@ -204,7 +207,9 @@ feed_list_parse (gpointer feed_item, gpointer input_ad)
   feed_to_parse = feed_item;
   //dlog_print (DLOG_DEBUG, LOG_TAG, "feed_list_parse");
   //dlog_print (DLOG_DEBUG, LOG_TAG, feed_to_parse->url);
+    printf("%s\n","test");
   err = crss_parse_feed (feed_to_parse, &rss_items);
+  printf("%i\n", err);
   if (err == 0)
     {
       ad->rss_items = rss_items;
@@ -301,12 +306,19 @@ cb_button_add_entry_clicked (void *input_ad, Evas_Object * obj,
 
 }
 
+
+
+
 void
 cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 {
   appdata_s *ad = input_ad;
   Evas_Object *button_back;
-  //Evas_Object *label_item_content;
+  //#ifdef TIZEN
+  Evas_Object *label_item_content;
+  //#else
+  //const Ewk_Page_Group *label_item_content;
+  //#endif
   GSList *feed_item;
   mrss_item_t *item_content;
   Evas_Object *bg;
@@ -316,6 +328,11 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   char *html_string;
   size_t len_description, len_content, len_pubdate, len_title, len_total;
+
+    #ifndef TIZEN
+  ewk_init();
+  #endif
+  
 
   elm_genlist_item_selected_set (event_info, EINA_FALSE);
 
@@ -361,28 +378,32 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
     {
       len_total = len_title + len_pubdate + 24;
     }
-
   html_string = malloc (sizeof (char) * len_total);
 
 
   /*web view */
 
-  evas_canvas = evas_object_evas_get (ad->nf);
-  //label_item_content = ewk_view_add (evas_canvas);//TODO
-  //ewk_settings_default_font_size_set (ewk_view_settings_get //TODO
+  evas_canvas = evas_object_evas_get (ad->nf); //TODO is canvas the reason for crashing?
+  label_item_content = ewk_view_add (evas_canvas);//TODO
+  #ifdef TIZEN
+  ewk_settings_default_font_size_set (ewk_view_settings_get
+  				      (label_item_content), 45);
+#else
+  //ewk_settings_default_font_size_set (ewk_page_group_settings_get
   //				      (label_item_content), 45);
-
+#endif
 
   //TODO: add display of description
 
-  //evas_object_size_hint_align_set (label_item_content, EVAS_HINT_FILL, 0);
-  //evas_object_size_hint_weight_set (label_item_content, EVAS_HINT_FILL,
-  //				    EVAS_HINT_EXPAND);
-  //elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
+  evas_object_size_hint_align_set (label_item_content, EVAS_HINT_FILL, 0);
+  evas_object_size_hint_weight_set (label_item_content, EVAS_HINT_FILL,
+  				    EVAS_HINT_EXPAND);
+  elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
   //dlog_print (DLOG_DEBUG, LOG_TAG, "html_string lentgh:");
-  char lenn[20];
-  snprintf (lenn, 20, "%d", len_total);
+  //char lenn[20];
+  //snprintf (lenn, 20, "%d", len_total);
   //dlog_print (DLOG_DEBUG, LOG_TAG, lenn);
+ 
   strcpy (html_string, "<h3>");	//TODO replace strcpy and cat with snprintf
   strcat (html_string, item_content->title);
   strcat (html_string, "</h3>");
@@ -390,6 +411,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   strcat (html_string, item_content->pubDate);
   strcat (html_string, "</h4>");
   strcat (html_string, "<hr>");
+   
   if (item_content->description)
     {
       strcat (html_string, item_content->description);
@@ -400,30 +422,32 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
       strcat (html_string, item_content->content);
     }
 
-  //ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);//TODO
-
+  ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);//TODO
+ 
   /*scroller */
 
   scroller = elm_scroller_add (ad->nf);
-  //elm_object_content_set (scroller, label_item_content);
+  elm_object_content_set (scroller, label_item_content);
 
   /*background */
   bg = elm_bg_add (ad->nf);
   elm_bg_color_set (bg, 230, 230, 230);
 
-
+ 
   elm_object_part_content_set (bg, "overlay", scroller);
+  //elm_object_part_content_set (bg, "overlay", label_item_content);
   evas_object_show (bg);
   evas_object_show (scroller);
-  //evas_object_show (label_item_content);
+  evas_object_show (label_item_content);
 
-
-  (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL,
+  
+  (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL, //TODO crashes on second article here
 				  bg, NULL);
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
   //dlog_print (DLOG_DEBUG, LOG_TAG, "rss item callback click");
-
-
+  printf("works here\n");
+  
+  
 }
 
 void
@@ -446,11 +470,10 @@ thread_update_run (void *input_ad, Ecore_Thread * thread)
   ad->rss_items = NULL;
   rss_items = ad->rss_items;
 
-  if (feed_list != NULL)
+  if (feed_list != NULL) //TODO crash here if incorrect RSS feed is the only one
     {
       g_slist_foreach (feed_list, feed_list_parse, ad);
       //dlog_print (DLOG_DEBUG, LOG_TAG, "feed parsed");
-
 
       rss_items = ad->rss_items;
 
@@ -473,8 +496,11 @@ thread_update_end (void *input_ad, Ecore_Thread * thread)
   /*all UI operations should be here as GUI is not thread safe */
 
   elm_genlist_clear (ad->item_list);
+
   if (ad->feeds != NULL)
     {
+		
+	  printf("%i",g_slist_length(ad->rss_items));
       g_slist_foreach (ad->rss_items, _display_rss_items, ad);
 
       elm_genlist_item_show (elm_genlist_first_item_get (ad->item_list),
@@ -482,15 +508,19 @@ thread_update_end (void *input_ad, Ecore_Thread * thread)
       if (ad->error_text[0] != '\0')
 	{
 	  error_popup = elm_popup_add (ad->nf);
-	  elm_object_style_set (error_popup, "toast");
-	  elm_object_text_set (error_popup, ad->error_text);
+
+	  elm_object_part_text_set (error_popup,NULL ,ad->error_text);
 	  elm_popup_timeout_set (error_popup, 3.0);
 #ifdef TIZEN
+	  elm_object_style_set (error_popup, "toast");
 	  eext_object_event_callback_add (error_popup, EEXT_CALLBACK_BACK,
 					  eext_popup_back_cb, NULL);
 
 	  evas_object_smart_callback_add (error_popup, "timeout",
+		
 					  eext_popup_back_cb, NULL);
+#else
+      elm_object_style_set (error_popup, "default");
 #endif
 	  evas_object_show (error_popup);
 

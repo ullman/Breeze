@@ -8,7 +8,6 @@ License: GPL Version 3
 #endif
 #include <glib.h>
 
-
 #include "breeze.h"
 #include "app_control_functions.h"
 #include "rss_functions.h"
@@ -100,6 +99,7 @@ create_base_gui (appdata_s * ad)
   ad->win = elm_win_util_standard_add (PACKAGE, PACKAGE);
   elm_win_conformant_set (ad->win, EINA_TRUE);
   elm_win_autodel_set (ad->win, EINA_TRUE);
+  evas_object_resize(ad->win, 300,400);
 
   if (elm_win_wm_rotation_supported_get (ad->win))
     {
@@ -137,7 +137,7 @@ create_base_gui (appdata_s * ad)
 
   /*add item style */
   ad->itc = elm_genlist_item_class_new ();
-  ad->itc->item_style = "type1";
+  ad->itc->item_style = "double_label";
   ad->itc->func.text_get = item_label_get;
   ad->itc->func.content_get = NULL;
   ad->itc->func.state_get = NULL;
@@ -201,12 +201,14 @@ create_base_gui (appdata_s * ad)
   if (!exists (ad->database))
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "database does not exist");
+      printf("database does not exist\n");
       database_create (ad->database);
     }
   else
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "database exists");
       /*load feeds from database */
+      printf("database does exist\n");
       database_load_feeds (ad->database, ad);
     }
 
@@ -225,6 +227,8 @@ create_base_gui (appdata_s * ad)
   evas_object_show (bg);
   evas_object_show (ad->nf);
   evas_object_show (ad->win);
+
+
   //dlog_print (DLOG_DEBUG, LOG_TAG, "ut is setup");
 
 }

@@ -5,10 +5,10 @@ TARGET= $(TARGET_DIR)/breeze
 BINDIR = /usr/bin/
 CC	= gcc
 SRCDIR = src
-CFLAGS = -c -O2 -Wall -Iinc
+CFLAGS = -c -g -O0 -Wall -Iinc
 LDFLAGS =
-XCFLAGS = `pkg-config --cflags ecore ecore-evas glib-2.0 elementary`
-XLDFLAGS = `pkg-config --libs ecore ecore-evas glib-2.0 elementary sqlite3 nxml mrss`
+XCFLAGS = `pkg-config --cflags ecore ecore-evas glib-2.0 elementary ewebkit2`
+XLDFLAGS = `pkg-config --libs ecore ecore-evas glib-2.0 elementary sqlite3 nxml mrss ewebkit2`
 SOURCES= $(SRCDIR)/cb_functions.c $(SRCDIR)/rss_functions.c $(SRCDIR)/breeze.c $(SRCDIR)/database.c $(SRCDIR)/app_control_functions.c
 
 OBJECTS=$(SOURCES:.c=.o)

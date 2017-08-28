@@ -56,6 +56,7 @@ typedef struct
   Evas_Object *entry_rss;
   Evas_Object *popup_menu;
   Evas_Object *delete_popup;
+  Evas_Object *ewebkit_view;
   GSList *rss_items;
   GSList *rss_current;
   GSList *feeds;
