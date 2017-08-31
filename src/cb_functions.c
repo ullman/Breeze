@@ -315,7 +315,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   appdata_s *ad = input_ad;
   Evas_Object *button_back;
   //#ifdef TIZEN
-  Evas_Object *label_item_content;
+  //Evas_Object *label_item_content;
   //#else
   //const Ewk_Page_Group *label_item_content;
   //#endif
@@ -323,16 +323,18 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   mrss_item_t *item_content;
   Evas_Object *bg;
   Evas_Object *scroller;
-  Evas *evas_canvas;
+  //Evas *evas_canvas;
   int clicked_index;
+  static int nn = 0;
 
-  char *html_string;
+  static char *html_string;
+
   size_t len_description, len_content, len_pubdate, len_title, len_total;
-
+/*
     #ifndef TIZEN
   ewk_init();
   #endif
-  
+  */
 
   elm_genlist_item_selected_set (event_info, EINA_FALSE);
 
@@ -383,11 +385,16 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   /*web view */
 
-  evas_canvas = evas_object_evas_get (ad->nf); //TODO is canvas the reason for crashing?
-  label_item_content = ewk_view_add (evas_canvas);//TODO
+  //evas_canvas = evas_object_evas_get (ad->nf); //TODO is canvas the reason for crashing?
+  if(nn == 0)
+  {
+  ad->ewebkit_view = ewk_view_add (evas_object_evas_get (ad->nf));//TODO
+  printf("starting webview\n");
+  nn = 1;
+  }
   #ifdef TIZEN
   ewk_settings_default_font_size_set (ewk_view_settings_get
-  				      (label_item_content), 45);
+  				      (ad->ewebkit_view), 45);
 #else
   //ewk_settings_default_font_size_set (ewk_page_group_settings_get
   //				      (label_item_content), 45);
@@ -395,10 +402,10 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   //TODO: add display of description
 
-  evas_object_size_hint_align_set (label_item_content, EVAS_HINT_FILL, 0);
-  evas_object_size_hint_weight_set (label_item_content, EVAS_HINT_FILL,
+  evas_object_size_hint_align_set (ad->ewebkit_view, EVAS_HINT_FILL, 0);
+  evas_object_size_hint_weight_set (ad->ewebkit_view, EVAS_HINT_FILL,
   				    EVAS_HINT_EXPAND);
-  elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);
+  //~ elm_label_line_wrap_set (label_item_content, ELM_WRAP_MIXED);//??ERROR
   //dlog_print (DLOG_DEBUG, LOG_TAG, "html_string lentgh:");
   //char lenn[20];
   //snprintf (lenn, 20, "%d", len_total);
@@ -422,40 +429,64 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
       strcat (html_string, item_content->content);
     }
 
-  ewk_view_html_string_load (label_item_content, html_string, NULL, NULL);//TODO
+  ewk_view_html_string_load (ad->ewebkit_view, html_string, NULL, NULL);//TODO
  
   /*scroller */
 
   scroller = elm_scroller_add (ad->nf);
-  elm_object_content_set (scroller, label_item_content);
+  elm_object_content_set (scroller, ad->ewebkit_view);
 
   /*background */
   bg = elm_bg_add (ad->nf);
   elm_bg_color_set (bg, 230, 230, 230);
 
- 
+
   elm_object_part_content_set (bg, "overlay", scroller);
   //elm_object_part_content_set (bg, "overlay", label_item_content);
   evas_object_show (bg);
   evas_object_show (scroller);
-  evas_object_show (label_item_content);
+  evas_object_show (ad->ewebkit_view);
 
-  
+
   (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL, //TODO crashes on second article here
 				  bg, NULL);
+#ifdef TIZEN
+
+  elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
-  //dlog_print (DLOG_DEBUG, LOG_TAG, "rss item callback click");
-  printf("works here\n");
-  
-  
+#endif
+
+
 }
 
 void
 cb_button_back_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 {
   appdata_s *ad = input_ad;
+  unsigned int nf_len;
+
   //dlog_print (DLOG_DEBUG, LOG_TAG, "popping naviframe");
+  //part = elm_naviframe_top_item_get(ad->nf);//needed b/o tizen bug
+  /*neccessary to fix a bug in tizen 2.4 phones*/
+  nf_len = eina_list_count(elm_naviframe_items_get(ad->nf));
+  //printf("list len: %o\n",nf_len);
+
+	if(nf_len > 1)
+		{
+#ifdef TIZEN
+
+  evas_object_hide(elm_object_part_content_unset(ad->nf, "elm.swallow.content"));
+
+#endif
   elm_naviframe_item_pop (ad->nf);
+		}
+//TODO add quit dialogue if back is clicked in main window
+
+	//elm_naviframe_item_simple_push(elm_naviframe_top_item_get(ad->nf),ad->nf);
+
+	//evas_object_hide(elm_object_item_part_content_get(part,"default"));
+	//needed b/o tizen bug
+
 }
 
 static void
@@ -586,9 +617,12 @@ cb_button_options_clicked (void *input_ad, Evas_Object * obj,
   nf_options =
     elm_naviframe_item_push (ad->nf, "RSS Feeds", button_back,
 			     ad->button_add_feed, bg, NULL);
+#ifdef TIZEN
+	 elm_object_part_content_unset (ad->nf, "title_right_btn");	//TODO: temp
+  elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_right_btn", ad->button_add_feed);	//TODO: temp
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
-
+#endif
   //TODO: add already updated feeds
   if (ad->feeds == NULL)
     {
@@ -659,8 +693,10 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   nf_options =
     elm_naviframe_item_push (ad->nf, "Add feed", button_back, NULL, bg, NULL);
+#ifdef TIZEN
+  elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
-
+#endif
 
 }
 
@@ -805,7 +841,10 @@ cb_popup1 (void *input_ad, Evas_Object * obj, void *event_info)
 
   nf_about =
     elm_naviframe_item_push (ad->nf, "About", button_back, NULL, bg, NULL);
+#ifdef TIZEN
+  elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
+#endif
 
 }
 

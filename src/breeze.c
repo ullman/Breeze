@@ -6,6 +6,11 @@ License: GPL Version 3
 #include <efl_extension.h>
 #include <app_common.h>
 #endif
+
+#ifndef TIZEN
+#include <EWebKit2.h>
+#endif
+
 #include <glib.h>
 
 #include "breeze.h"
@@ -93,6 +98,8 @@ create_base_gui (appdata_s * ad)
   Elm_Object_Item *nf_it;
   char *data_folder;
 
+  Evas *evas_canvas;
+
 
 
   /* Window */
@@ -126,10 +133,11 @@ create_base_gui (appdata_s * ad)
 
   /*create naviframe */
   ad->nf = elm_naviframe_add (ad->conform);
-  elm_object_part_content_set (ad->layout, "item_list", ad->nf);
+  elm_naviframe_content_preserve_on_pop_set(ad->nf,EINA_TRUE); // crash if not set due to ewebkit memory being freed
   #ifdef TIZEN
   eext_object_event_callback_add (ad->nf, EEXT_CALLBACK_BACK,
-				  eext_naviframe_back_cb, ad);
+				  cb_button_back_clicked, ad);
+//					  eext_naviframe_back_cb, ad);
   #endif
   evas_object_size_hint_weight_set (ad->nf, EVAS_HINT_EXPAND,
 				    EVAS_HINT_EXPAND);
@@ -185,9 +193,12 @@ create_base_gui (appdata_s * ad)
     elm_naviframe_item_push (ad->nf, "Feed Items", ad->button_options,
 			     ad->button_update, bg, NULL);
 
+#ifdef TIZEN
+  elm_object_part_content_unset (ad->nf, "title_right_btn");
+  elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_right_btn", ad->button_update);
   elm_object_part_content_set (ad->nf, "title_left_btn", ad->button_options);
-
+#endif
   /* create database if not exists */
 
   #ifdef TIZEN
@@ -219,10 +230,16 @@ create_base_gui (appdata_s * ad)
   eext_win_keygrab_set (ad->win, "XF86Menu");
   #endif
 
+  /*initiallize webview*/
+  #ifndef TIZEN //TODO try to run on tizen
+  ewk_init();
+  #endif
+
+
   /* Show window after base gui is set up */
   evas_object_show (ad->button_update);
   evas_object_show (ad->item_list);
-  //evas_object_show (ad->layout);
+  evas_object_show (ad->button_options);
   evas_object_show (ad->conform);
   evas_object_show (bg);
   evas_object_show (ad->nf);
