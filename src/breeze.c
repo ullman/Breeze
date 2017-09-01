@@ -21,6 +21,7 @@ License: GPL Version 3
 #include "database.h"
 
 
+
 int
 exists (const char *fname)
 {
@@ -44,12 +45,12 @@ item_label_get (void *data, Evas_Object * obj, const char *part)
   if (!strcmp (part, "elm.text"))
     {
       if (this_item->title)
-	{
+	      {
 
-	  return strdup (elm_entry_utf8_to_markup(this_item->title));//TODO free this somewhere
-	}
+          return strdup (elm_entry_utf8_to_markup (this_item->title));//TODO free this somewhere
+        }
       else
-	return strdup ("error: no title");
+      return strdup ("error: no title");
     }
   else if (!strcmp (part, "elm.text.sub"))
     {
@@ -106,7 +107,7 @@ create_base_gui (appdata_s * ad)
   ad->win = elm_win_util_standard_add (PACKAGE, PACKAGE);
   elm_win_conformant_set (ad->win, EINA_TRUE);
   elm_win_autodel_set (ad->win, EINA_TRUE);
-  evas_object_resize(ad->win, 300,400);
+  evas_object_resize (ad->win, 300, 400);
 
   if (elm_win_wm_rotation_supported_get (ad->win))
     {
@@ -133,12 +134,12 @@ create_base_gui (appdata_s * ad)
 
   /*create naviframe */
   ad->nf = elm_naviframe_add (ad->conform);
-  elm_naviframe_content_preserve_on_pop_set(ad->nf,EINA_TRUE); // crash if not set due to ewebkit memory being freed
-  #ifdef TIZEN
+  elm_naviframe_content_preserve_on_pop_set (ad->nf, EINA_TRUE);	// crash if not set due to ewebkit memory being freed
+#ifdef TIZEN
   eext_object_event_callback_add (ad->nf, EEXT_CALLBACK_BACK,
 				  cb_button_back_clicked, ad);
-//					  eext_naviframe_back_cb, ad);
-  #endif
+//                                        eext_naviframe_back_cb, ad);
+#endif
   evas_object_size_hint_weight_set (ad->nf, EVAS_HINT_EXPAND,
 				    EVAS_HINT_EXPAND);
   elm_object_content_set (ad->conform, ad->nf);
@@ -201,39 +202,39 @@ create_base_gui (appdata_s * ad)
 #endif
   /* create database if not exists */
 
-  #ifdef TIZEN
+#ifdef TIZEN
   data_folder = app_get_data_path ();
-  #else
+#else
   data_folder = "./";
-  #endif
+#endif
   strcpy (ad->database, data_folder);
   strcat (ad->database, "breeze.db");
   //dlog_print (DLOG_DEBUG, LOG_TAG, ad->database);
   if (!exists (ad->database))
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "database does not exist");
-      printf("database does not exist\n");
+      printf ("database does not exist\n");
       database_create (ad->database);
     }
   else
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "database exists");
       /*load feeds from database */
-      printf("database does exist\n");
+      printf ("database does exist\n");
       database_load_feeds (ad->database, ad);
     }
 
   elm_naviframe_item_pop_cb_set (nf_it, naviframe_pop_cb, ad);
   /*popup menu */
-  #ifdef TIZEN
+#ifdef TIZEN
   ecore_event_handler_add (ECORE_EVENT_KEY_DOWN, cb_hardware_key, ad);
   eext_win_keygrab_set (ad->win, "XF86Menu");
-  #endif
+#endif
 
-  /*initiallize webview*/
-  #ifndef TIZEN //TODO try to run on tizen
-  ewk_init();
-  #endif
+  /*initiallize webview */
+#ifndef TIZEN			//TODO try to run on tizen
+  ewk_init ();
+#endif
 
 
   /* Show window after base gui is set up */
@@ -293,40 +294,36 @@ main (int argc, char *argv[])
 }
 #else
 
-//TODO write new main function here
+  //TODO write new main function here
 
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main (int argc, char **argv)
 {
-   //Evas_Object *win, *btn;
+  //Evas_Object *win, *btn;
 
-   appdata_s ad = { 0, };
-   appdata_s *ad_real;
-   ad_real = &ad;
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+  appdata_s ad = { 0, };
+  appdata_s *ad_real;
+  ad_real = &ad;
+  elm_policy_set (ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   //win = elm_win_util_standard_add("Main", "Hello, World!");
-   //elm_win_autodel_set(win, EINA_TRUE);
+  //win = elm_win_util_standard_add("Main", "Hello, World!");
+  //elm_win_autodel_set(win, EINA_TRUE);
+  //
+  //btn = elm_button_add(win);
+  //elm_object_text_set(btn, "Goodbye Cruel World");
+  //elm_win_resize_object_add(win, btn);
+  //evas_object_smart_callback_add(btn, "clicked", on_click, win);
+  //evas_object_show(btn);
+  //evas_object_show(win);
 
-   //btn = elm_button_add(win);
-   //elm_object_text_set(btn, "Goodbye Cruel World");
-   //elm_win_resize_object_add(win, btn);
-   //evas_object_smart_callback_add(btn, "clicked", on_click, win);
-   //evas_object_show(btn);
-
-   //evas_object_show(win);
-
-   create_base_gui(ad_real);
+  create_base_gui (ad_real);
 
 
-   elm_run();
+  elm_run ();
 
-   return 0;
+  return 0;
 }
-ELM_MAIN()
+ELM_MAIN ()
 
 #endif
-
-
-

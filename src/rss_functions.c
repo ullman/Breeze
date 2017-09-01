@@ -33,13 +33,13 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   feed_options = mrss_options_new (10, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);	//10 sec timeout
 
 
-  feed_url = elm_entry_markup_to_utf8(feed_url);
+  feed_url = elm_entry_markup_to_utf8 (feed_url);
   //TODO add error if network is not setup
   err = mrss_parse_url_with_options_and_error (feed_url,
 					       &feed_data, feed_options,
 					       &code);
-					      
-  printf("%i\n", err);
+
+  printf ("%i\n", err);
 
   //dlog_print (DLOG_DEBUG, LOG_TAG, "exited mrss_parse_url");
 
@@ -48,11 +48,11 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
       //dlog_print (DLOG_DEBUG, LOG_TAG, "MRSS_ERR_DOWNLOAD");
       return MRSS_ERR_DOWNLOAD;
     }
-  else if(err !=MRSS_OK)
-  {
-	  return 1;
-  }
-  
+  else if (err != MRSS_OK)
+    {
+      return 1;
+    }
+
   if (feed_data->encoding == NULL)
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is NULL, assuming utf8");
@@ -67,7 +67,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   //rss_feed->icon = feed_data->image_url;
   //dlog_print(DLOG_DEBUG, LOG_TAG, "image url:");
   //dlog_print(DLOG_DEBUG, LOG_TAG, rss_feed->icon);
-  
+
   //dlog_print (DLOG_DEBUG, LOG_TAG, "encoding is");
   //dlog_print (DLOG_DEBUG, LOG_TAG, feed_data->encoding);
   if (err == MRSS_OK && !strcmp (feed_data->encoding, "utf-8"))
@@ -91,7 +91,7 @@ crss_parse_feed (feed_s * rss_feed, GSList ** item_llist)
   else
     {
       //dlog_print (DLOG_DEBUG, LOG_TAG, "feed parse error");
-      
+
       return 1;
     }
 

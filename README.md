@@ -10,6 +10,8 @@ Tested on Samsung Z1,Z2,Z3,Z4.
 
 ## Compiling
 
+### For Tizen
+
 Install Tizen Studio including the CLI tools and setup the certificate you want
 to use to sign the tpk.
 Save the name of the certificate to your environment:
@@ -24,7 +26,7 @@ the file `build_opt.sh`
 
 Then compile with
 ```bash
-make
+./build_all.sh
 ```
 The tpk will be placed in the folder `Release`
 
@@ -32,6 +34,14 @@ Install the tpk on your device using:
 
 ```bash
 sdb install <tpk file>
+```
+
+### For Linux
+
+```bash
+./autogen.h
+./configure
+make
 ```
 
 ## Licence
