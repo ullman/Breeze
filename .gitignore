@@ -1,5 +1,6 @@
 .sign
 build
+breeze
 Debug
 Release
 lib
@@ -12,6 +13,7 @@ Makefile.in
 /configure
 /m4/
 /stamp-h?
+/.buildconfig
 .deps/
 .dirstamp
 *.o
