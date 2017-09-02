@@ -1,6 +1,7 @@
 .sign
 build
 breeze
+tags
 Debug
 Release
 lib

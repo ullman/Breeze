@@ -4,6 +4,7 @@ License: GPL Version 3
 */
 #include <sqlite3.h>
 #include <stdio.h>
+
 #include "breeze.h"
 #include "database.h"
 #include "rss_functions.h"

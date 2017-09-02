@@ -314,7 +314,12 @@ cb_button_add_entry_clicked (void *input_ad, Evas_Object * obj,
 
 }
 
-
+void
+cb_web_transition(void* input_ad, Evas_Object* obj,  void* event_info)
+{
+  appdata_s *ad = input_ad;
+  ewk_view_html_string_load (ad->ewebkit_view, ad->html_string, NULL, NULL);	//TODO
+}
 
 
 void
@@ -333,9 +338,10 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   Evas_Object *scroller;
   //Evas *evas_canvas;
   int clicked_index;
+  Elm_Widget_Item* web_frame;
+  Ewk_Settings* web_settings;
   static int nn = 0;
 
-  static char *html_string;
 
   size_t len_description, len_content, len_pubdate, len_title, len_total;
 /*
@@ -347,7 +353,6 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   elm_genlist_item_selected_set (event_info, EINA_FALSE);
 
   feed_item = ad->rss_items;
-
 
 
 
@@ -388,7 +393,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
     {
       len_total = len_title + len_pubdate + 24;
     }
-  html_string = malloc (sizeof (char) * len_total);
+  ad-> html_string = malloc (sizeof (char) * len_total);
 
 
   /*web view */
@@ -401,12 +406,17 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
       nn = 1;
     }
 #ifdef TIZEN
-  ewk_settings_default_font_size_set (ewk_view_settings_get
-				      (ad->ewebkit_view), 45);
+  web_settings = ewk_view_settings_get(ad->ewebkit_view);
+
 #else
-  //ewk_settings_default_font_size_set (ewk_page_group_settings_get
-  //                                  (label_item_content), 45);
+  web_settings = ewk_page_group_settings_get
+				      (ewk_view_page_group_get(ad->ewebkit_view));
+  ewk_view_layout_fixed_set(ad->ewebkit_view, EINA_TRUE);
+
 #endif
+
+  ewk_settings_default_font_size_set (web_settings, 45);
+  ewk_settings_javascript_enabled_set(web_settings,EINA_FALSE);
 
   //TODO: add display of description
 
@@ -419,52 +429,50 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
   //snprintf (lenn, 20, "%d", len_total);
   //dlog_print (DLOG_DEBUG, LOG_TAG, lenn);
 
-  strcpy (html_string, "<h3>");	//TODO replace strcpy and cat with snprintf
-  strcat (html_string, item_content->title);
-  strcat (html_string, "</h3>");
-  strcat (html_string, "<h4>");
-  strcat (html_string, item_content->pubDate);
-  strcat (html_string, "</h4>");
-  strcat (html_string, "<hr>");
+  strcpy (ad->html_string, "<h3>");	//TODO replace strcpy and cat with snprintf
+  strcat (ad->html_string, item_content->title);
+  strcat (ad->html_string, "</h3>");
+  strcat (ad->html_string, "<h4>");
+  strcat (ad->html_string, item_content->pubDate);
+  strcat (ad->html_string, "</h4>");
+  strcat (ad->html_string, "<hr>");
 
   if (item_content->description)
     {
-      strcat (html_string, item_content->description);
+      strcat (ad->html_string, item_content->description);
     }
 
   if (item_content->content)
     {
-      strcat (html_string, item_content->content);
+      strcat (ad->html_string, item_content->content);
     }
 
-  ewk_view_html_string_load (ad->ewebkit_view, html_string, NULL, NULL);	//TODO
+  //ewk_view_html_string_load (ad->ewebkit_view, ad->html_string, NULL, NULL);	//TODO
 
   /*scroller */
 
-  scroller = elm_scroller_add (ad->nf);
-  elm_object_content_set (scroller, ad->ewebkit_view);
+  //scroller = elm_scroller_add (ad->nf);
+  //elm_object_part_content_set (scroller,"default" ,ad->ewebkit_view);
 
   /*background */
   bg = elm_bg_add (ad->nf);
   elm_bg_color_set (bg, 230, 230, 230);
 
 
-  elm_object_part_content_set (bg, "overlay", scroller);
+  elm_object_part_content_set (bg, "overlay", ad->ewebkit_view);
   //elm_object_part_content_set (bg, "overlay", label_item_content);
-  evas_object_show (bg);
-  evas_object_show (scroller);
-  evas_object_show (ad->ewebkit_view);
 
+  //evas_object_show (scroller);
+  //evas_object_show (ad->ewebkit_view);
 
-  (void) elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL,	//TODO crashes on second article here
+  evas_object_smart_callback_add(ad->nf,"transition,finished", cb_web_transition, ad);
+  web_frame = elm_naviframe_item_push (ad->nf, "RSS Article", button_back, NULL,
 				  bg, NULL);
 #ifdef TIZEN
 
   elm_object_part_content_unset (ad->nf, "title_left_btn");
   elm_object_part_content_set (ad->nf, "title_left_btn", button_back);
 #endif
-
-
 }
 
 void
