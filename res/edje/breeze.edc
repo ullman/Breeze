@@ -1,0 +1,102 @@
+collections {
+   base_scale: 1.0;
+   group { "main"; 
+         parts { 
+    swallow{ "swallow_name";
+            scale: 1;
+            desc { "default";
+               visible: 1;
+               align: 0.0 0.5;
+               rel1.relative: 0.02000 0.2;
+               rel2.relative: 0.9800 0.3;
+            }
+         }
+         swallow { "swallow_url";
+            scale: 1;
+            desc { "default";
+               visible: 1;
+               align: 0.0 0.5;
+               rel1.relative: 0.02000 0.4;
+               rel2.relative: 0.980000 0.5;
+            }
+         }
+         text { "text_name";
+            scale: 1;
+            effect: OUTLINE;
+            desc { "default";
+               color: 255 255 255 255;
+               color2: 0 0 0 100;
+               visible: 1;
+               text {
+                  size: 20;
+                  font: "Sans";
+                  text: "Feed Name";
+                  align: 0.010 0.5;
+                  min: 0 0;
+               }
+               align: 0.5 0.5;
+               rel1.relative: 0.00 0.10;
+               rel2.relative: 1 0.20;
+            }
+         }
+         text { "text_url";
+            scale: 1;
+            effect: OUTLINE;
+            desc { "default";
+               color: 255 255 255 255;
+               color2: 0 0 0 100;
+               visible: 1;
+               text {
+                  size: 20;
+                  font: "Sans";
+                  text: "Feed URL";
+                  align: 0.010 0.5;
+                  min: 0 0;
+               }
+               align: 0.5 0.5;
+               rel1.relative: 0.00 0.3;
+               rel2.relative: 1 0.4;
+            }
+         }
+         swallow { "swallow_button";
+            scale: 1;
+            desc { "default";
+               visible: 1;
+               align: 0.5 0.5;
+               rel1.relative: 0.6 0.800;
+               rel2.relative: 0.9 0.90;
+            }
+         }
+         rect { "rect_name";
+            scale: 1;
+            insert_after: "swallow_name";
+            desc { "default";
+               color: 255 255 255 255;
+               visible: 1;
+               align: 0.5 0.5;
+               rel1.to_x: "swallow_name";
+               rel1.to_y: "swallow_name";
+               rel2.to_x: "swallow_name";
+               rel2.to_y: "swallow_name";
+               rel1.relative: 0.00 0.00;
+               rel2.relative: 1.00 1.00;
+            }
+         }
+         rect { "rect_url";
+            scale: 1;
+            insert_after: "swallow_url";
+            desc { "default";
+               color: 255 255 255 255;
+               visible: 1;
+               align: 0.5 0.5;
+               rel1.to_x: "swallow_url";
+               rel1.to_y: "swallow_url";
+               rel2.to_x: "swallow_url";
+               rel2.to_y: "swallow_url";
+               rel1.relative: 0.00 0.00;
+               rel2.relative: 1.00 1.00;
+            }
+         }
+      }
+   }
+}

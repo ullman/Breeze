@@ -21,7 +21,6 @@ License: GPL Version 3
 #include "database.h"
 
 
-
 int
 exists (const char *fname)
 {

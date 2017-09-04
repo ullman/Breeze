@@ -22,6 +22,9 @@ License: GPL Version 3
 #include "mrss.h"
 
 
+#define BREEZE_EDJ "../res/edje/breeze.edj"
+
+
 
 
 
@@ -663,6 +666,9 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   Evas_Object *button_back;
   Evas_Object *add_box;
   Evas_Object *add_button;
+  Evas_Object *edje_add_form;
+  Evas_Object *sobj;
+  Eina_Bool err_edj;
 
 
   /*add feed naviframe window */
@@ -671,36 +677,61 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   bg = elm_bg_add (ad->nf);
   elm_bg_color_set (bg, 230, 230, 230);
 
+    /*edj load*/
+  edje_add_form = edje_object_add(evas_object_evas_get(bg));
+  err_edj = edje_object_file_set(edje_add_form, BREEZE_EDJ, "main");
+  if (err_edj==EINA_FALSE)
+    printf("error loading edj\n");
+
+
+
   /*box */
-  add_box = elm_box_add (bg);
-  evas_object_size_hint_align_set (add_box, EVAS_HINT_FILL, 0.0);
-  evas_object_size_hint_weight_set (add_box, EVAS_HINT_EXPAND, 0.0);
-  elm_object_part_content_set (bg, "overlay", add_box);
-  evas_object_show (add_box);
+  //add_box = elm_box_add (bg);
+  //evas_object_size_hint_align_set (add_box, EVAS_HINT_FILL, 0.0);
+  //evas_object_size_hint_weight_set (add_box, EVAS_HINT_EXPAND, 0.0);
+  //elm_object_part_content_set (bg, "overlay", add_box);
+  //evas_object_show (add_box);
 
   /*name entry */
 
-  ad->entry_name = create_singleline_editfield_layout (add_box, "Feed name");
-  elm_box_pack_end (add_box, ad->entry_name);
-  evas_object_show (ad->entry_name);
+  //ad->entry_name = create_singleline_editfield_layout (add_box, "Feed name");
+  ad->entry_name = elm_entry_add(bg);
+  elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=20 color=#444444'");
+  //elm_box_pack_end (add_box, ad->entry_name);
+  //evas_object_show (ad->entry_name);
 
   /*rss entry */
-  ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
-  elm_box_pack_end (add_box, ad->entry_rss);
-  evas_object_show (ad->entry_rss);
+  //ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
+  ad->entry_rss = elm_entry_add(bg);
+  elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=20 color=#444444'");
+  //elm_object_part_text_set(ad->entry_rss,@@)
+  //elm_box_pack_end (add_box, ad->entry_rss);
+  //evas_object_show (ad->entry_rss);
 
 
   /*add button */
-  add_button = elm_button_add (add_box);
-  elm_box_pack_end (add_box, add_button);
+  add_button = elm_button_add (bg);
+  //elm_box_pack_end (add_box, add_button);
   elm_object_part_text_set (add_button, "default", "Add");
   evas_object_smart_callback_add (add_button, "clicked",
 				  cb_button_add_entry_clicked, ad);
 
-  evas_object_size_hint_align_set (add_button, 0.1, 0.0);
-  evas_object_size_hint_weight_set (add_button, EVAS_HINT_EXPAND, 0.0);
-  evas_object_size_hint_min_set (add_button, 300, 100);
-  evas_object_show (add_button);
+  //evas_object_size_hint_align_set (add_button, 0.1, 0.0);
+  //evas_object_size_hint_weight_set (add_button, EVAS_HINT_EXPAND, 0.0);
+  //evas_object_size_hint_min_set (add_button, 300, 100);
+  //evas_object_show (add_button);
+
+  edje_object_part_swallow(edje_add_form,"swallow_button",add_button);
+  edje_object_part_swallow(edje_add_form,"swallow_name",ad->entry_name);
+  edje_object_part_swallow(edje_add_form,"swallow_url",ad->entry_rss);
+  elm_object_part_content_set (bg, "overlay", edje_add_form);
+  sobj = edje_object_part_swallow_get(edje_add_form, "swallow_name");
+     if(sobj == ad->entry_name)
+      printf("Swallowing worked!\n");
+  else
+    printf("swallow did not work\n");
+  evas_object_show(bg);
+
 
   /*back button */
   button_back = button_back_create (ad);
