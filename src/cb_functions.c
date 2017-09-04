@@ -705,17 +705,19 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   //ad->entry_name = create_singleline_editfield_layout (add_box, "Feed name");
   ad->entry_name = elm_entry_add(bg);
-  elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=15 color=#444444 valign=0.5'");
+  elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=15 color=#FFFFFF valign=0.5'");
   elm_entry_single_line_set(ad->entry_name,EINA_TRUE);
+  elm_entry_scrollable_set(ad->entry_name,EINA_TRUE);
   //elm_box_pack_end (add_box, ad->entry_name);
   //evas_object_show (ad->entry_name);
 
   /*rss entry */
   //ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
   ad->entry_rss = elm_entry_add(bg);
-  elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=15 color=#444444 valign=0.5'");
+  elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=15 color=#FFFFFF valign=0.5'");
   elm_entry_single_line_set(ad->entry_rss,EINA_TRUE);
   elm_entry_autocapital_type_set(ad->entry_rss,ELM_AUTOCAPITAL_TYPE_NONE);
+  elm_entry_scrollable_set(ad->entry_rss,EINA_TRUE);
   //elm_object_part_text_set(ad->entry_rss,@@)
   //elm_box_pack_end (add_box, ad->entry_rss);
   //evas_object_show (ad->entry_rss);
