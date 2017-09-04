@@ -59,5 +59,4 @@ USER_EXT_EDC0_EDCS_FONT_DIRS = ${OUTPUT_DIR} edje/fonts
 
 # Resource Filter
 USER_RES_INCLUDE = 
-USER_RES_EXCLUDE = 
-
+USER_RES_EXCLUDE = *.am Makefile

@@ -72,7 +72,7 @@ collections {
             insert_after: "swallow_name";
             desc { "default";
                color: 200 200 200 255;
-               visible: 0;
+               visible: 1;
                align: 0.5 0.5;
                rel1.to_x: "swallow_name";
                rel1.to_y: "swallow_name";
@@ -87,7 +87,7 @@ collections {
             insert_after: "swallow_url";
             desc { "default";
                color: 200 200 200 255;
-               visible: 0;
+               visible: 1;
                align: 0.5 0.5;
                rel1.to_x: "swallow_url";
                rel1.to_y: "swallow_url";
