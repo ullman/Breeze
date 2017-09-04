@@ -1,14 +1,14 @@
 collections {
    base_scale: 1.0;
    group { "main"; 
-         parts { 
-    swallow{ "swallow_name";
+      parts { 
+         swallow{ "swallow_name";
             scale: 1;
             desc { "default";
                visible: 1;
                align: 0.0 0.5;
-               rel1.relative: 0.02000 0.2;
-               rel2.relative: 0.9800 0.3;
+               rel1.relative: 0.32000 0.1;
+               rel2.relative: 0.9800 0.2;
             }
          }
          swallow { "swallow_url";
@@ -16,13 +16,13 @@ collections {
             desc { "default";
                visible: 1;
                align: 0.0 0.5;
-               rel1.relative: 0.02000 0.4;
-               rel2.relative: 0.980000 0.5;
+               rel1.relative: 0.32000 0.2;
+               rel2.relative: 0.980000 0.3;
             }
          }
          text { "text_name";
             scale: 1;
-            effect: OUTLINE;
+            effect: NONE;
             desc { "default";
                color: 0 0 0 255;
                color2: 0 0 0 100;
@@ -31,17 +31,17 @@ collections {
                   size: 20;
                   font: "Sans";
                   text: "Feed Name";
-                  align: 0.010 0.5;
+                  align: 0.10 0.5;
                   min: 0 0;
                }
                align: 0.5 0.5;
                rel1.relative: 0.00 0.10;
-               rel2.relative: 1 0.20;
+               rel2.relative: 0.3 0.20;
             }
          }
          text { "text_url";
             scale: 1;
-            effect: OUTLINE;
+            effect: NONE;
             desc { "default";
                color: 0 0 0 255;
                color2: 0 0 0 100;
@@ -50,12 +50,12 @@ collections {
                   size: 20;
                   font: "Sans";
                   text: "Feed URL";
-                  align: 0.010 0.5;
+                  align: 0.1 0.5;
                   min: 0 0;
                }
                align: 0.5 0.5;
-               rel1.relative: 0.00 0.3;
-               rel2.relative: 1 0.4;
+               rel1.relative: 0.00 0.2;
+               rel2.relative: 0.3 0.3;
             }
          }
          swallow { "swallow_button";
