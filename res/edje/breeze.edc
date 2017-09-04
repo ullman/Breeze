@@ -7,7 +7,7 @@ collections {
             desc { "default";
                visible: 1;
                align: 0.0 0.5;
-               rel1.relative: 0.32000 0.1;
+               rel1.relative: 0.42000 0.1;
                rel2.relative: 0.9800 0.2;
             }
          }
@@ -16,7 +16,7 @@ collections {
             desc { "default";
                visible: 1;
                align: 0.0 0.5;
-               rel1.relative: 0.32000 0.2;
+               rel1.relative: 0.42000 0.2;
                rel2.relative: 0.980000 0.3;
             }
          }
@@ -24,11 +24,11 @@ collections {
             scale: 1;
             effect: NONE;
             desc { "default";
-               color: 0 0 0 255;
+               color: 150 150 150 255;
                color2: 0 0 0 100;
                visible: 1;
                text {
-                  size: 20;
+                  size: 15;
                   font: "Sans";
                   text: "Feed Name";
                   align: 0.10 0.5;
@@ -36,18 +36,18 @@ collections {
                }
                align: 0.5 0.5;
                rel1.relative: 0.00 0.10;
-               rel2.relative: 0.3 0.20;
+               rel2.relative: 0.4 0.20;
             }
          }
          text { "text_url";
             scale: 1;
             effect: NONE;
             desc { "default";
-               color: 0 0 0 255;
+               color: 150 150 150 255;
                color2: 0 0 0 100;
                visible: 1;
                text {
-                  size: 20;
+                  size: 15;
                   font: "Sans";
                   text: "Feed URL";
                   align: 0.1 0.5;
@@ -55,7 +55,7 @@ collections {
                }
                align: 0.5 0.5;
                rel1.relative: 0.00 0.2;
-               rel2.relative: 0.3 0.3;
+               rel2.relative: 0.4 0.3;
             }
          }
          swallow { "swallow_button";
@@ -71,7 +71,7 @@ collections {
             scale: 1;
             insert_after: "swallow_name";
             desc { "default";
-               color: 255 255 255 255;
+               color: 200 200 200 255;
                visible: 1;
                align: 0.5 0.5;
                rel1.to_x: "swallow_name";
@@ -86,7 +86,7 @@ collections {
             scale: 1;
             insert_after: "swallow_url";
             desc { "default";
-               color: 255 255 255 255;
+               color: 200 200 200 255;
                visible: 1;
                align: 0.5 0.5;
                rel1.to_x: "swallow_url";
