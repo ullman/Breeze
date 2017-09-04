@@ -145,8 +145,12 @@ create_base_gui (appdata_s * ad)
 
   /*add item style */
   ad->itc = elm_genlist_item_class_new ();
+#ifdef TIZEN
+  ad->itc->item_style = "type1";
+#else
   ad->itc->item_style = "double_label";
-  ad->itc->func.text_get = item_label_get;
+#endif
+    ad->itc->func.text_get = item_label_get;
   ad->itc->func.content_get = NULL;
   ad->itc->func.state_get = NULL;
   ad->itc->func.del = NULL;
