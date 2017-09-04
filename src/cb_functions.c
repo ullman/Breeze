@@ -8,7 +8,7 @@ License: GPL Version 3
 #define BREEZE_EDJ "edje/breeze.edj"
 #else
 #include <EWebKit2.h>
-#define BREEZE_EDJ "../res/edje/breeze.edj"
+#define BREEZE_EDJ DATADIR"/res/edje/breeze.edj"
 #endif
 #include <stdlib.h>
 #include <stdio.h>
@@ -686,6 +686,7 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   edje_add_form = edje_object_add(evas_object_evas_get(bg));
   err_edj = edje_object_file_set(edje_add_form, edj_path, "main");
 #else
+  printf("%s\n", BREEZE_EDJ);
   edje_add_form = edje_object_add(evas_object_evas_get(bg));
   err_edj = edje_object_file_set(edje_add_form, BREEZE_EDJ, "main");
   if (err_edj==EINA_FALSE)
@@ -704,14 +705,14 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   //ad->entry_name = create_singleline_editfield_layout (add_box, "Feed name");
   ad->entry_name = elm_entry_add(bg);
-  elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=20 color=#444444'");
+  elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=30 color=#444444'");
   //elm_box_pack_end (add_box, ad->entry_name);
   //evas_object_show (ad->entry_name);
 
   /*rss entry */
   //ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
   ad->entry_rss = elm_entry_add(bg);
-  elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=20 color=#444444'");
+  elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=30 color=#444444'");
   //elm_object_part_text_set(ad->entry_rss,@@)
   //elm_box_pack_end (add_box, ad->entry_rss);
   //evas_object_show (ad->entry_rss);

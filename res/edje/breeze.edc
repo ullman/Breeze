@@ -24,7 +24,7 @@ collections {
             scale: 1;
             effect: OUTLINE;
             desc { "default";
-               color: 255 255 255 255;
+               color: 0 0 0 255;
                color2: 0 0 0 100;
                visible: 1;
                text {
@@ -43,7 +43,7 @@ collections {
             scale: 1;
             effect: OUTLINE;
             desc { "default";
-               color: 255 255 255 255;
+               color: 0 0 0 255;
                color2: 0 0 0 100;
                visible: 1;
                text {
