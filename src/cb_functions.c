@@ -5,8 +5,10 @@ License: GPL Version 3
 #define _GNU_SOURCE
 #ifdef TIZEN
 #include <EWebKit.h>
+#define BREEZE_EDJ "edje/breeze.edj"
 #else
 #include <EWebKit2.h>
+#define BREEZE_EDJ "../res/edje/breeze.edj"
 #endif
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,7 +24,7 @@ License: GPL Version 3
 #include "mrss.h"
 
 
-#define BREEZE_EDJ "../res/edje/breeze.edj"
+
 
 
 
@@ -678,11 +680,17 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
   elm_bg_color_set (bg, 230, 230, 230);
 
     /*edj load*/
+#ifdef TIZEN
+  char edj_path[200] = { 0,};
+  app_get_resource(BREEZE_EDJ,edj_path, (int) 200);
+  edje_add_form = edje_object_add(evas_object_evas_get(bg));
+  err_edj = edje_object_file_set(edje_add_form, edj_path, "main");
+#else
   edje_add_form = edje_object_add(evas_object_evas_get(bg));
   err_edj = edje_object_file_set(edje_add_form, BREEZE_EDJ, "main");
   if (err_edj==EINA_FALSE)
     printf("error loading edj\n");
-
+#endif
 
 
   /*box */
