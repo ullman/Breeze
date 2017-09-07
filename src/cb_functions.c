@@ -502,6 +502,12 @@ cb_button_back_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 #endif
       elm_naviframe_item_pop (ad->nf);
     }
+#ifdef TIZEN
+  else
+    {
+    layout_back_cb(input_ad, obj, event_info);
+    }
+#endif
 //TODO add quit dialogue if back is clicked in main window
 
   //elm_naviframe_item_simple_push(elm_naviframe_top_item_get(ad->nf),ad->nf);
