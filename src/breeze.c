@@ -98,8 +98,6 @@ create_base_gui (appdata_s * ad)
   Elm_Object_Item *nf_it;
   char *data_folder;
 
-  Evas *evas_canvas;
-
 
 
   /* Window */

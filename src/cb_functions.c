@@ -78,6 +78,7 @@ sort_rss_items (gconstpointer a, gconstpointer b)
   //TODO the underlying order of the entries are not changed
 }
 
+
 static void
 editfield_focused_cb (void *data, Evas_Object * obj, void *event_info)
 {
@@ -106,6 +107,7 @@ editfield_changed_cb (void *data, Evas_Object * obj, void *event_info)
   else
     elm_object_signal_emit (editfield, "elm,action,hide,button", "");
 }
+
 
 static void
 editfield_clear_button_clicked_cb (void *data, Evas_Object * obj,
@@ -267,8 +269,6 @@ cb_button_add_entry_clicked (void *input_ad, Evas_Object * obj,
   feed_s *feed_item;
   GSList *feed_list;
   GSList *last_in_list;
-  Evas_Object *entry_name;
-  Evas_Object *entry_rss;
 
   const char *input_name;
   const char *input_rss;
@@ -280,11 +280,7 @@ cb_button_add_entry_clicked (void *input_ad, Evas_Object * obj,
 
 
 
-  //entry_name =
-  //elm_object_part_content_get (ad->entry_name, "elm.swallow.content");
   input_name = elm_object_part_text_get (ad->entry_name, NULL);
-  //entry_rss =
-  //elm_object_part_content_get (ad->entry_rss, "elm.swallow.content");
   input_rss = elm_object_part_text_get (ad->entry_rss, NULL);
   //input_name = elm_entry_entry_get (entry_name);
   //input_rss = elm_entry_entry_get (entry_rss);
@@ -332,16 +328,10 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 {
   appdata_s *ad = input_ad;
   Evas_Object *button_back;
-  //#ifdef TIZEN
-  //Evas_Object *label_item_content;
-  //#else
-  //const Ewk_Page_Group *label_item_content;
-  //#endif
   GSList *feed_item;
   mrss_item_t *item_content;
   Evas_Object *bg;
-  Evas_Object *scroller;
-  //Evas *evas_canvas;
+  //Evas_Object *scroller;
   int clicked_index;
   Elm_Widget_Item* web_frame;
   Ewk_Settings* web_settings;
@@ -349,11 +339,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
 
   size_t len_description, len_content, len_pubdate, len_title, len_total;
-/*
-    #ifndef TIZEN
-  ewk_init();
-  #endif
-  */
+
 
   elm_genlist_item_selected_set (event_info, EINA_FALSE);
 
@@ -368,7 +354,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   button_back = button_back_create (ad);
 
-  /*calc length of body and allocate memory */
+  /* calc length of body and allocate memory */
 
   len_title = strlen (item_content->title);
   len_pubdate = strlen (item_content->pubDate);
@@ -403,7 +389,7 @@ cb_rss_item_clicked (void *input_ad, Evas_Object * obj, void *event_info)
 
   /*web view */
 
-  //evas_canvas = evas_object_evas_get (ad->nf); //TODO is canvas the reason for crashing?
+
   if (nn == 0)
     {
       ad->ewebkit_view = ewk_view_add (evas_object_evas_get (ad->nf));	//TODO
@@ -672,7 +658,6 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 
   Evas_Object *bg;
   Evas_Object *button_back;
-  Evas_Object *add_box;
   Evas_Object *add_button;
   Evas_Object *edje_add_form;
   Evas_Object *sobj;
@@ -700,46 +685,28 @@ cb_button_add_feed_clicked (void *input_ad, Evas_Object * obj,
 #endif
 
 
-  /*box */
-  //add_box = elm_box_add (bg);
-  //evas_object_size_hint_align_set (add_box, EVAS_HINT_FILL, 0.0);
-  //evas_object_size_hint_weight_set (add_box, EVAS_HINT_EXPAND, 0.0);
-  //elm_object_part_content_set (bg, "overlay", add_box);
-  //evas_object_show (add_box);
-
   /*name entry */
 
-  //ad->entry_name = create_singleline_editfield_layout (add_box, "Feed name");
   ad->entry_name = elm_entry_add(bg);
   elm_entry_text_style_user_push(ad->entry_name,"DEFAULT='left_margin=10 font_size=15 color=#FFFFFF valign=0.5'");
   elm_entry_single_line_set(ad->entry_name,EINA_TRUE);
   elm_entry_scrollable_set(ad->entry_name,EINA_TRUE);
-  //elm_box_pack_end (add_box, ad->entry_name);
-  //evas_object_show (ad->entry_name);
 
   /*rss entry */
-  //ad->entry_rss = create_singleline_editfield_layout (add_box, "Feed URL");
+
   ad->entry_rss = elm_entry_add(bg);
   elm_entry_text_style_user_push(ad->entry_rss,"DEFAULT='left_margin=10 font_size=15 color=#FFFFFF valign=0.5'");
   elm_entry_single_line_set(ad->entry_rss,EINA_TRUE);
   elm_entry_autocapital_type_set(ad->entry_rss,ELM_AUTOCAPITAL_TYPE_NONE);
   elm_entry_scrollable_set(ad->entry_rss,EINA_TRUE);
-  //elm_object_part_text_set(ad->entry_rss,@@)
-  //elm_box_pack_end (add_box, ad->entry_rss);
-  //evas_object_show (ad->entry_rss);
 
 
   /*add button */
   add_button = elm_button_add (bg);
-  //elm_box_pack_end (add_box, add_button);
   elm_object_part_text_set (add_button, "default", "Add");
   evas_object_smart_callback_add (add_button, "clicked",
 				  cb_button_add_entry_clicked, ad);
 
-  //evas_object_size_hint_align_set (add_button, 0.1, 0.0);
-  //evas_object_size_hint_weight_set (add_button, EVAS_HINT_EXPAND, 0.0);
-  //evas_object_size_hint_min_set (add_button, 300, 100);
-  //evas_object_show (add_button);
 
   edje_object_part_swallow(edje_add_form,"swallow_button",add_button);
   edje_object_part_swallow(edje_add_form,"swallow_name",ad->entry_name);
